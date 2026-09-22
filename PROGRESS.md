@@ -132,7 +132,23 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 3 -- The ecosystem
 
-- ⬜ 10 Protocols (MCP server + client, A2A, Agent Skills)
+- ✅ 10 Protocols -- 3 lessons (MCP overview & architecture, building an MCP
+  server+client, A2A & Agent Skills), 5 runnable examples (verified, including
+  a real subprocess-spawning stdio MCP client-server connection), 3 labs:
+  (1) real MCP server (wraps Module 03's calculator/weather tools) + real
+  client, tested via in-process `Client(mcp_server_instance)` connection --
+  5 tests passing; (2) A2A-style task lifecycle state machine (simplified,
+  not the full SDK) -- 12 tests passing; (3) packaging a tool as a validated
+  `SKILL.md` (a real hand-written skill file, not just Python) -- 9 tests
+  passing. All labs' starter/ correctly fail. Added `mcp` and `pyyaml` as
+  dependencies. **Verification note**: web search/fetch results for the `mcp`
+  Python package described a stale pre-rework API
+  (`mcp.server.fastmcp.FastMCP`); installed the actual package (2.2.0) and
+  used `dir()`/`inspect.signature()` to get ground-truth current API
+  (`mcp.server.MCPServer`, `mcp.Client`, etc.) before writing any lesson/lab
+  code, then executed every code sample directly to confirm it runs -- see
+  Module 10's pitfalls.md for this as a general lesson about fast-moving
+  specs. Links checked (47 unique, all OK).
 - ⬜ 11 Frameworks (all 9: LangGraph, OpenAI Agents SDK, Claude Agent SDK, Google ADK, CrewAI, Microsoft Agent Framework, Pydantic AI, smolagents, LlamaIndex Workflows)
 - ⬜ 12 Multi-agent systems
 - ⬜ Project: MCP server for a real public API
@@ -212,23 +228,39 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 3, Module 10 (Protocols)**: MCP (build a server AND client),
-A2A, and Agent Skills, under `curriculum/10-protocols/`, following the same
-per-module structure used so far. Per PLAN.md this was verified against the
-**2026-07-28 MCP spec** (stateless protocol core, multi-round-trip requests,
-header-based routing) -- re-verify it's still current before writing (Ground
-Rule 1; specs move fast and this plan is now weeks old). Labs (per the
-approved plan): `mcp-server`, `mcp-client`, `a2a-handoff`,
-`agent-skill-package` -- four smaller labs rather than one big one, since
-these are four fairly distinct protocols/standards. The MCP server should
-wrap Module 03's calculator/weather tools (reuse, don't reimplement); the MCP
-client should be a real client talking to that real server (likely needs
-`mcp` as a new dependency -- check current PyPI package name/API before
-adding it to `pyproject.toml`). A2A and Agent Skills labs can be smaller/more
-conceptual given their scope (a minimal two-agent task handoff; packaging one
-existing tool as a `SKILL.md`) -- use judgment on depth per Ground Rule "verify
-everything that changes fast" without over-building. This is a good candidate
-for checking whether local MCP client/server tests can run fully offline
-(stdio transport between a local client and local server process should not
-need network access) -- confirm this before assuming Ground Rule 4 holds here.
-Run the solution's tests before marking done, then update this file and commit.
+Build **Level 3, Module 11 (Frameworks)** -- the largest single module in the
+plan. Per the user's explicit decision (see PLAN.md), build the **same
+reference agent** as a full, tested implementation in **all 9** current major
+frameworks: LangGraph, OpenAI Agents SDK, Claude Agent SDK, Google ADK,
+CrewAI, Microsoft Agent Framework, Pydantic AI, smolagents, LlamaIndex
+Workflows. End with a verified comparison matrix + "how to choose" guide.
+
+**Suggested approach given the scale** (not yet started, open to revision):
+1. Pick ONE simple reference agent shape reused across all 9: a ReAct-style
+   agent with a single calculator tool answering a basic math question --
+   simple enough to implement 9x without excessive duplicated effort, complex
+   enough to show each framework's tool-calling and loop syntax meaningfully.
+2. For EACH framework: (a) verify its current API by installing it and
+   inspecting directly (`dir()`/`inspect.signature()`), the same way Module 10
+   caught stale `mcp` docs -- do not trust search-result code samples alone,
+   several of these frameworks changed significantly in 2026 per PLAN.md's
+   research (e.g. Microsoft Agent Framework GA'd April 2026 merging
+   AutoGen+Semantic Kernel); (b) find or build a way to test offline without a
+   real API key -- most frameworks support a custom/fake chat-model class for
+   testing (check each framework's own testing docs first); (c) build the
+   reference agent + tests; (d) note framework-specific dependencies added to
+   `pyproject.toml` (expect this to be a lot of new dependencies -- consider
+   an optional dependency group per framework, e.g. `--group framework-langgraph`,
+   rather than bloating the default install for every learner).
+3. If a framework genuinely cannot be tested offline within reasonable effort,
+   do not fabricate a passing test -- mark it clearly as `UNVERIFIED`/partial
+   in this file and the module's own README, per Ground Rule 2.
+4. Build the comparison matrix + "how to choose" guide only after all 9 are
+   actually built and tested, so it reflects real, verified experience.
+
+This module will likely take substantially longer than prior modules --
+budget accordingly and consider committing incrementally per-framework
+(e.g. one commit per framework lab, plus a final commit for the comparison
+matrix) rather than one giant commit, so a resumed session can pick up
+mid-module from this file if needed. Run each solution's tests before marking
+that framework done, then update this file and commit.
