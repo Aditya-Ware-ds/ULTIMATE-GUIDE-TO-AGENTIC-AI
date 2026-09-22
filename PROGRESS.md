@@ -298,7 +298,24 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 5 -- Production engineering
 
-- ⬜ 16 Evaluation
+- ✅ 16 Evaluation -- Level 5 begins. 3 lessons: eval-driven development and
+  golden datasets; LLM-as-judge (structured-output verdicts, and the three
+  documented judge biases -- position, verbosity, self-preference -- with
+  mitigations, citing Zheng et al. 2023 and Liu et al. 2023, both verified
+  real via arXiv abstracts on 2026-09-22); trajectory evals and current
+  public benchmarks (SWE-bench, GAIA, tau-bench, BrowseComp, WebArena,
+  OSWorld, Terminal-Bench -- SWE-bench and GAIA's current-active status
+  verified directly; the lesson explicitly tells readers to re-verify
+  leaderboard numbers rather than quoting any, since that's the part that
+  goes stale). 1 runnable example (`judge_bias_demo.py`, verified --
+  demonstrates position bias and the swap-and-check mitigation with a
+  deliberately biased mock judge). 1 lab: a golden-dataset eval harness
+  (`evaluate_dataset`) with an LLM-as-judge, generic over any
+  `agent_fn(client, question) -> str` signature so it could grade any
+  earlier module's agent. 4 tests passing (structured verdict, call
+  ordering, accuracy computation, perfect score); starter's gaps correctly
+  raise `NotImplementedError`. 224 passed, 9 skipped, 3 deselected
+  repo-wide; links checked (82 unique, all OK).
 - ⬜ 17 Observability & debugging
 - ⬜ 18 Security & safety
 - ⬜ 19 Deployment & scale
@@ -380,27 +397,33 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Level 4 and its interleaved projects are complete. Start **Level 5, Module
-16 (Evaluation)** under `curriculum/16-evaluation/`, following the same
-per-module structure used so far. Cover: eval-driven development, golden
-datasets, LLM-as-judge (and its known biases -- position/verbosity/self-
-preference bias), trajectory/tool-call evals (checking *how* an agent
-reached an answer, not just the final output -- Module 07's checkpoint
-state and Module 13's tool-call dispatch give you real trajectories to
-evaluate), regression suites, and current public benchmarks (SWE-bench,
-GAIA, tau-bench, BrowseComp, WebArena, OSWorld, Terminal-Bench -- re-verify
-each is still current and accurately described before citing it, per Ground
-Rule 1, the same discipline that caught the stale computer-use claim in
-Module 14). Lab: a small golden-dataset eval harness plus an LLM-as-judge
-for one earlier agent (Module 04's ReAct agent or Module 13's coding agent
-are good candidates -- both already have clear, checkable success criteria),
-runnable offline against the mock provider (script both the agent's
-responses and the judge's verdicts). After Module 16, continue to Module 17
-(Observability & debugging -- reuse `shared/tracing/tracer.py`, built in
-Phase 0 but not yet exercised by any lab, for real), Module 18 (Security &
-safety), and Module 19 (Deployment & scale) to close Level 5. Two follow-ups
-noted in Open Issues above are worth revisiting when this environment has
-reliable network access: Module 14's live Playwright test and Module 15's
-live Anthropic vision test were both written but not executed this session.
-Run each solution's tests before marking done, then update this file and
-commit after each module.
+Build **Level 5, Module 17 (Observability & debugging)** under
+`curriculum/17-observability-and-debugging/`, following the same per-module
+structure used so far. This is where `shared/tracing/tracer.py` (built in
+Phase 0 -- real OpenTelemetry SDK usage, `InMemorySpanExporter`,
+`invoke_agent_span`/`chat_span`/`execute_tool_span` context managers with
+`gen_ai.*` attributes) finally gets exercised by a lab for the first time;
+re-read it before writing lessons rather than re-deriving its API from
+memory. Cover: OpenTelemetry GenAI semantic conventions (already used to
+verify Module 10's/11's span hierarchy claims -- re-verify current status,
+since OTel GenAI conventions were still evolving as of this project's
+original research), instrumenting an agent loop with nested spans (an
+`invoke_agent` span containing `chat` and `execute_tool` child spans, per
+Module 10's established hierarchy), replaying a failed run from its trace
+for debugging, and cost/latency dashboards built from span attributes. Lab:
+instrument one earlier agent (Module 04's ReAct agent is a good candidate --
+simple, well-understood, already has clear steps to trace) with
+`shared/tracing/`, export spans via `InMemorySpanExporter`, and write a test
+that asserts specific spans/attributes exist after a run (proving the
+instrumentation actually captured what happened, not just that the agent
+still works). After Module 17, continue to Module 18 (Security & safety --
+OWASP LLM Top 10 2026 and OWASP Agentic Top 10 2026, re-verify both are
+still current before citing specific rankings; direct/indirect prompt
+injection, building on Module 14's URL-allowlisting and Module 13's
+sandboxing as concrete prior defenses to reference) and Module 19
+(Deployment & scale) to close Level 5. Two follow-ups noted in Open Issues
+above are worth revisiting when this environment has reliable network
+access: Module 14's live Playwright test and Module 15's live Anthropic
+vision test were both written but not executed this session. Run each
+solution's tests before marking done, then update this file and commit
+after each module.
