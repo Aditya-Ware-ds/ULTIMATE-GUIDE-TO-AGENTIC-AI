@@ -42,7 +42,16 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   temperature/softmax sampling simulator: starter/solution/tests, 10 tests
   passing against `solution/`). Links checked (`scripts/check_links.py`: all
   17 unique links OK).
-- ⬜ 02 Talking to LLMs
+- ✅ 02 Talking to LLMs -- 5 lessons (messages/roles, streaming, structured
+  outputs, prompt engineering fundamentals, cost & latency), 4 runnable examples
+  (verified), 1 lab (chat loop + structured extraction + cost estimation built on
+  `shared.llm`: starter/solution/tests, 9 tests passing against `solution/`).
+  While verifying structured-output API shapes for lesson 3, found and fixed two
+  real gaps in the Phase-0 provider adapters: `AnthropicProvider.complete()` and
+  `GeminiProvider.complete()` both accepted `response_schema` but silently
+  ignored it. Now wired to Anthropic's GA `output_config.format` and Gemini's
+  current (post-May-2026-migration) `response_format`. Added `jsonschema` as a
+  dependency. Links checked (24 unique, all OK).
 
 ## Level 1 -- First agent, no frameworks
 
@@ -141,17 +150,16 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 0, Module 02 (Talking to LLMs)**: lessons on the messages/roles API
-shape, streaming, structured outputs (JSON schema), prompt engineering
-fundamentals, and cost & latency, under `curriculum/02-talking-to-llms/`,
-following the same per-module structure Modules 00-01 used. Lab (per the
-approved plan): build the first version of `shared/llm/client.py`-style code
-yourself (guided) against `shared/llm/mock.py`'s `MockLLMProvider`, then swap in
-one real provider as a live-gated exercise. This module can and should reuse
-`shared/llm/` directly (it already exists from Phase 0) rather than
-reimplementing it -- the lesson is about understanding what that code does, and
-the lab should have the learner build a *small* client/agent-facing wrapper on
-top of `shared.llm.get_client()`, not redo the provider adapters. Verify current
-structured-output API shapes (JSON schema param names) per provider before
-writing lesson 3 (Ground Rule 1). Run the solution's tests before marking done,
+Build **Level 1, Module 03 (Tool use / function calling)**: lessons on tool
+schema design, dispatch, and error handling/retries, under
+`curriculum/03-tool-use/`, following the same per-module structure used so far.
+This is the first Level 1 module ("first agent, no frameworks") -- per Ground
+Rule 6, this and Module 04 must be hand-rolled with no framework. Lab (per the
+approved plan): a hand-written calculator + weather-lookup tool-calling loop
+using `shared.llm` directly (mock provider scripts the tool-call turns; a
+`shared/sandbox/`-style pattern is NOT needed here since these are pure-Python
+tools with no code execution, but keep that distinction explicit in the lesson).
+Verify each provider's current tool-definition wire shape is still accurate
+(lesson content can reference `shared/llm/providers/*.py`, which already
+implement this) before writing. Run the solution's tests before marking done,
 then update this file and commit.

@@ -2,12 +2,16 @@
 which is the current standard as of 2026 (superseding the older generate_content
 flow for new tool-calling integrations).
 
-Verified against https://ai.google.dev/gemini-api/docs/function-calling on
-2026-09-22. Only exercised by `live`-marked tests -- re-check that URL if this stops
-working. Native token-level streaming for the Interactions API was not clearly
-documented at verification time, so `stream()` here is a non-native fallback that
-calls complete() once and re-chunks the text; replace with real streaming once the
-SDK's streaming shape for interactions.create is confirmed (tracked in PROGRESS.md).
+Verified against https://ai.google.dev/gemini-api/docs/function-calling and
+https://ai.google.dev/gemini-api/docs/structured-output on 2026-09-22 -- the
+polymorphic `response_format` param (type/mime_type/schema) is the *current*
+post-May-2026-migration shape; the older `response_schema`/`response_mime_type`
+pair on `GenerateContentConfig` is deprecated. Only exercised by `live`-marked
+tests -- re-check those URLs if this stops working. Native token-level streaming
+for the Interactions API was not clearly documented at verification time, so
+`stream()` here is a non-native fallback that calls complete() once and
+re-chunks the text; replace with real streaming once the SDK's streaming shape
+for interactions.create is confirmed (tracked in PROGRESS.md).
 """
 
 from __future__ import annotations
@@ -92,6 +96,12 @@ class GeminiProvider(LLMProvider):
         tool_defs = self._tool_defs(tools)
         if tool_defs:
             kwargs["tools"] = tool_defs
+        if response_schema:
+            kwargs["response_format"] = {
+                "type": "json_schema",
+                "mime_type": "application/json",
+                "schema": response_schema,
+            }
         interaction = await self._client.aio.interactions.create(**kwargs)
         steps = getattr(interaction, "steps", [])
         tool_calls = [

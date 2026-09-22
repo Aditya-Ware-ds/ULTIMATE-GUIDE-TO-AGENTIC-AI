@@ -1,7 +1,10 @@
 """Adapter for Anthropic's Messages API.
 
-Verified against https://platform.claude.com/docs/en/api/messages on 2026-09-22.
-Only exercised by `live`-marked tests -- re-check that URL if this stops working.
+Verified against https://platform.claude.com/docs/en/api/messages and
+https://platform.claude.com/docs/en/build-with-claude/structured-outputs on
+2026-09-22 (Structured Outputs is GA, no beta header required; the request
+parameter is `output_config: {"format": {"type": "json_schema", "schema": ...}}`).
+Only exercised by `live`-marked tests -- re-check those URLs if this stops working.
 """
 
 from __future__ import annotations
@@ -92,6 +95,8 @@ class AnthropicProvider(LLMProvider):
         tool_defs = self._tool_defs(tools)
         if tool_defs:
             kwargs["tools"] = tool_defs
+        if response_schema:
+            kwargs["output_config"] = {"format": {"type": "json_schema", "schema": response_schema}}
         response = await self._client.messages.create(**kwargs)
         text = "".join(b.text for b in response.content if b.type == "text")
         tool_calls = [
