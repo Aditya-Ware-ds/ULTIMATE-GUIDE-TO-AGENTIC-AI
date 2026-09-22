@@ -111,7 +111,15 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   plan-and-execute AND evaluator-optimizer implemented for the same task, with
   a written comparison in the solution's docstring: starter/solution/tests, 9
   tests passing against `solution/`, all failing correctly against `starter/`).
-- ⬜ 09 Human-in-the-loop
+- ✅ 09 Human-in-the-loop -- 3 lessons (approval gates, interrupt & resume,
+  escalation & UX), 3 runnable examples (verified), 1 lab (agent that pauses
+  before a gated `send_email` tool call, persisting the pending call to a
+  Module-07-style checkpoint, and resumes correctly on approval or rejection
+  -- rejection modeled as a normal `ToolResult(is_error=True)`, reusing
+  Module 03's recoverable-failure mechanism: starter/solution/tests, 6 tests
+  passing against `solution/`, all failing correctly against `starter/`).
+  **Level 2 (Modules 07-09) is now fully complete** except the interleaved
+  project below.
 - ⬜ Project: customer-support agent with escalation
 
 ## Level 3 -- The ecosystem
@@ -196,23 +204,20 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 2, Module 09 (Human-in-the-loop)** -- the last module of Level
-2. Lessons on approvals, interrupts/pause-resume, escalation to a human, and
-UX considerations for agent products, under `curriculum/09-human-in-the-loop/`,
-following the same per-module structure used so far. Per the approved plan,
-the lab should add an approval gate + interrupt/resume to an agent for a
-"risky" tool call -- this connects directly to two things already built:
-Module 07's checkpoint/resume mechanics (an approval gate is essentially a
-deliberate, indefinite pause-and-resume point rather than a crash-recovery
-one) and Module 03's tool-schema/dispatch pattern (mark specific tools, e.g. a
-"send_email" or "delete_file"-style tool, as requiring approval before
-dispatch runs them). Design the lab so a paused-for-approval state is itself a
-checkpoint (reuse Module 07's `save_checkpoint`/`load_checkpoint` shape rather
-than inventing a separate mechanism), and the test simulates a human
-approving or rejecting via a second, separate call rather than a blocking
-`input()` prompt (keeps it offline-testable). After this module, Level 2 is
-complete -- build the **"customer-support agent with escalation" project**
-under `projects/` next (interleaved per the approved plan), reusing Module
-07's memory/state and this module's escalation pattern, before starting Level
-3 (Module 10, Protocols). Run the solution's tests before marking done, then
-update this file and commit.
+Build the **"customer-support agent with escalation" project** under
+`projects/02-customer-support-agent/` (interleaved after Level 2, before Level
+3 begins), following the same starter/solution/tests structure as the
+research-assistant project (`projects/01-research-assistant/`). It should
+integrate, not re-derive: a small support knowledge base (Module 06-style
+retrieval, or simpler -- a handful of FAQ documents is enough, doesn't need
+the full hybrid-search machinery if a simpler lookup suffices for the
+project's actual scope), an approval gate on a genuinely consequential tool
+(e.g. `issue_refund`, reusing Module 09's `_continue_loop`/checkpoint pattern
+directly), and escalation (Module 09 lesson 3's `should_escalate`/
+`build_escalation_summary` pattern) triggered on hitting `max_steps` or an
+out-of-scope request. Keep it offline-testable against
+`shared.llm.get_client("mock")` like every prior lab/project. After this
+project, Level 2 is complete -- move to **Level 3, Module 10 (Protocols)**:
+MCP (build a server AND client against the current 2026-07-28 spec -- verify
+it's still current before writing, per Ground Rule 1), A2A, and Agent Skills.
+Run all tests before marking done, then update this file and commit.
