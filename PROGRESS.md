@@ -337,7 +337,31 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   assumption); starter's gaps correctly raise `NotImplementedError`. 229
   passed, 9 skipped, 3 deselected repo-wide; links checked (84 unique, all
   OK).
-- ⬜ 18 Security & safety
+- ✅ 18 Security & safety -- **corrected a fabrication-risk landscape claim
+  from the original PLAN.md before writing anything**: verified against
+  OWASP's current site (2026-09-22) that the LLM Top 10 is the **2025**
+  list (not "2026"), Excessive Agency ranks **#6** (not "#3"), and there is
+  **no verified numbered "OWASP Top 10 for Agentic Applications
+  (ASI01-ASI10)"** -- only a separate, non-numbered "Agentic AI: Threats
+  and Mitigations" guide (published 2025-02-17) from OWASP's Agentic
+  Security Initiative. resources.md documents this correction explicitly.
+  3 lessons: prompt injection (direct vs. indirect, why indirect is the
+  harder problem for every tool-using agent built since Module 04); tool
+  permissions and least privilege (names Module 13's `resolve_within_repo`/
+  `DEFAULT_ALLOWED_COMMANDS` and Module 14's URL allowlist explicitly as
+  this same pattern, applied to a new consequential tool); OWASP + a
+  4-step red-team process (pick a scenario, prove the exploit with a
+  failing test, patch, prove the fix). 1 runnable example
+  (`injection_defense_demo.py`, verified -- vulnerable vs. patched
+  `send_email` side by side against the identical poisoned-document
+  scenario). 1 lab: a `read_document`/`send_email` agent with a real
+  embedded prompt-injection document; the core red-team test scripts a
+  simulated "successfully manipulated" model attempting to email an
+  attacker and asserts `_SENT_EMAILS` stays empty -- proving the tool-level
+  allowlist blocks the exploit regardless of the model's decision, not by
+  hoping the model resists the injection. 4 tests passing; starter's gaps
+  correctly raise `NotImplementedError`. 233 passed, 9 skipped, 3 deselected
+  repo-wide; links checked (88 unique, all OK).
 - ⬜ 19 Deployment & scale
 
 ## Level 6 -- Expert / frontier
@@ -417,33 +441,32 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 5, Module 18 (Security & safety)** under
-`curriculum/18-security-and-safety/`, following the same per-module
-structure used so far. Before writing, verify current status of **OWASP Top
-10 for LLM Applications 2026** and the separate **OWASP Top 10 for Agentic
-Applications 2026 (ASI01-ASI10)** (the approved plan's landscape notes, from
-2026-09-22, cited specific publication dates and said Excessive Agency rose
-to #3 on the LLM list -- re-check both lists are still current and that
-ranking is still accurate before citing it, the same discipline that caught
-the stale computer-use claim in Module 14). Cover: direct and indirect
-prompt injection (building directly on Module 14's URL-allowlisting as a
-concrete prior defense against one injection vector, and Module 13's
-sandboxing/path-scoping against a compromised agent's blast radius), tool
-permission design and least privilege (Module 13's command/path allowlists
-and Module 14's action vocabulary are already worked examples of this
-principle -- name it explicitly here), data exfiltration risks, and
-red-teaming your own agent. Lab: red-team an earlier agent (Module 06's RAG
-agent or Module 10's MCP-tool agent are good candidates -- untrusted
-retrieved/tool content is the natural indirect-injection vector) with a
-documented indirect-injection scenario (a malicious instruction embedded in
-retrieved content), prove the exploit works against the unpatched agent via
-a failing test, then patch it with a permission/sandboxing fix and prove
-the same test now passes -- this "prove it's broken, then prove the fix
-works" structure should itself be test-driven, mirroring Module 13's
-test-driven coding loop. After Module 18, build Module 19 (Deployment &
-scale) to close Level 5, then start Level 6 (Module 20, Optimizing agents).
-Two follow-ups noted in Open Issues above are worth revisiting when this
-environment has reliable network access: Module 14's live Playwright test
-and Module 15's live Anthropic vision test were both written but not
-executed this session. Run each solution's tests before marking done, then
-update this file and commit after each module.
+Build **Level 5, Module 19 (Deployment & scale)** under
+`curriculum/19-deployment-and-scale/`, the last module of Level 5, following
+the same per-module structure used so far. Cover: wrapping an agent in a
+streaming API service (FastAPI is the natural choice -- confirm it's still
+current/standard before adding it as a new dependency, the same check given
+to Playwright in Module 14), background jobs and durable execution (Module
+07's checkpoint/resume pattern is the direct foundation -- a durable job is
+essentially "checkpoint/resume, but triggered by infrastructure instead of
+a crash"), retries/idempotency (an idempotency key preventing a retried
+request from re-running a consequential action -- ties directly to Module
+18's consequential-tool-permission material), rate limits and caching
+(including prompt caching -- verify current provider-specific prompt-cache
+mechanics before writing that section), model routing, and cost
+optimization (rolls up Module 02's cost math and Module 17's
+observability/dashboard material into an actual production decision-making
+process). Lab: wrap an earlier agent (Module 04's ReAct agent or Module
+18's secure agent are good candidates) in a small FastAPI service with
+idempotent job handling -- offline-testable via FastAPI's `TestClient` (no
+real network/server needed) and the mock provider, so no new live-only
+dependency is required for the default test suite. After Module 19, Level 5
+is complete -- start **Level 6, Module 20 (Optimizing agents)**: DSPy
+prompt/weight optimization (confirm DSPy is still the reference framework
+before citing it, per the original plan's research), fine-tuning for tool
+use, distillation, open-weight/local models. Two follow-ups noted in Open
+Issues above are worth revisiting when this environment has reliable
+network access: Module 14's live Playwright test and Module 15's live
+Anthropic vision test were both written but not executed this session. Run
+each solution's tests before marking done, then update this file and commit
+after each module.
