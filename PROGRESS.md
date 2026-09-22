@@ -316,7 +316,27 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   ordering, accuracy computation, perfect score); starter's gaps correctly
   raise `NotImplementedError`. 224 passed, 9 skipped, 3 deselected
   repo-wide; links checked (82 unique, all OK).
-- ⬜ 17 Observability & debugging
+- ✅ 17 Observability & debugging -- **`shared/tracing/tracer.py` (built in
+  Phase 0, unit-tested there but never wired around a real agent loop) is
+  finally exercised by a lab.** 3 lessons: tracing agent loops (wrapping
+  Module 04's exact ReAct loop in `invoke_agent_span`/`chat_span`/
+  `execute_tool_span`, recording token usage via `span.set_attribute(...)`
+  once the response is known, never as opening kwargs); replaying failed
+  runs (`replay_trace`: sort by `start_time`, indent by walking each span's
+  `parent` chain -- explicitly connected back to Module 12 lesson 02's
+  "multi-agent debugging needs the whole graph" point); cost/latency
+  dashboards (`summarize_usage` rolling up `gen_ai.usage.*` attributes,
+  feeding into Module 02's `estimate_cost`, plus why a single run isn't a
+  dashboard -- trends need aggregation across many runs, the same principle
+  as Module 16's eval accuracy). 1 runnable example
+  (`trace_replay_demo.py`, verified, produces a real nested 4-span trace
+  and replays it correctly indented). 1 lab: a traced ReAct agent
+  (calculate tool) plus `replay_trace`/`summarize_usage`; 5 tests passing,
+  including one that walks the actual parent chain to prove an
+  `execute_tool` span nests under `invoke_agent` (not a hardcoded depth
+  assumption); starter's gaps correctly raise `NotImplementedError`. 229
+  passed, 9 skipped, 3 deselected repo-wide; links checked (84 unique, all
+  OK).
 - ⬜ 18 Security & safety
 - ⬜ 19 Deployment & scale
 
@@ -397,33 +417,33 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 5, Module 17 (Observability & debugging)** under
-`curriculum/17-observability-and-debugging/`, following the same per-module
-structure used so far. This is where `shared/tracing/tracer.py` (built in
-Phase 0 -- real OpenTelemetry SDK usage, `InMemorySpanExporter`,
-`invoke_agent_span`/`chat_span`/`execute_tool_span` context managers with
-`gen_ai.*` attributes) finally gets exercised by a lab for the first time;
-re-read it before writing lessons rather than re-deriving its API from
-memory. Cover: OpenTelemetry GenAI semantic conventions (already used to
-verify Module 10's/11's span hierarchy claims -- re-verify current status,
-since OTel GenAI conventions were still evolving as of this project's
-original research), instrumenting an agent loop with nested spans (an
-`invoke_agent` span containing `chat` and `execute_tool` child spans, per
-Module 10's established hierarchy), replaying a failed run from its trace
-for debugging, and cost/latency dashboards built from span attributes. Lab:
-instrument one earlier agent (Module 04's ReAct agent is a good candidate --
-simple, well-understood, already has clear steps to trace) with
-`shared/tracing/`, export spans via `InMemorySpanExporter`, and write a test
-that asserts specific spans/attributes exist after a run (proving the
-instrumentation actually captured what happened, not just that the agent
-still works). After Module 17, continue to Module 18 (Security & safety --
-OWASP LLM Top 10 2026 and OWASP Agentic Top 10 2026, re-verify both are
-still current before citing specific rankings; direct/indirect prompt
-injection, building on Module 14's URL-allowlisting and Module 13's
-sandboxing as concrete prior defenses to reference) and Module 19
-(Deployment & scale) to close Level 5. Two follow-ups noted in Open Issues
-above are worth revisiting when this environment has reliable network
-access: Module 14's live Playwright test and Module 15's live Anthropic
-vision test were both written but not executed this session. Run each
-solution's tests before marking done, then update this file and commit
-after each module.
+Build **Level 5, Module 18 (Security & safety)** under
+`curriculum/18-security-and-safety/`, following the same per-module
+structure used so far. Before writing, verify current status of **OWASP Top
+10 for LLM Applications 2026** and the separate **OWASP Top 10 for Agentic
+Applications 2026 (ASI01-ASI10)** (the approved plan's landscape notes, from
+2026-09-22, cited specific publication dates and said Excessive Agency rose
+to #3 on the LLM list -- re-check both lists are still current and that
+ranking is still accurate before citing it, the same discipline that caught
+the stale computer-use claim in Module 14). Cover: direct and indirect
+prompt injection (building directly on Module 14's URL-allowlisting as a
+concrete prior defense against one injection vector, and Module 13's
+sandboxing/path-scoping against a compromised agent's blast radius), tool
+permission design and least privilege (Module 13's command/path allowlists
+and Module 14's action vocabulary are already worked examples of this
+principle -- name it explicitly here), data exfiltration risks, and
+red-teaming your own agent. Lab: red-team an earlier agent (Module 06's RAG
+agent or Module 10's MCP-tool agent are good candidates -- untrusted
+retrieved/tool content is the natural indirect-injection vector) with a
+documented indirect-injection scenario (a malicious instruction embedded in
+retrieved content), prove the exploit works against the unpatched agent via
+a failing test, then patch it with a permission/sandboxing fix and prove
+the same test now passes -- this "prove it's broken, then prove the fix
+works" structure should itself be test-driven, mirroring Module 13's
+test-driven coding loop. After Module 18, build Module 19 (Deployment &
+scale) to close Level 5, then start Level 6 (Module 20, Optimizing agents).
+Two follow-ups noted in Open Issues above are worth revisiting when this
+environment has reliable network access: Module 14's live Playwright test
+and Module 15's live Anthropic vision test were both written but not
+executed this session. Run each solution's tests before marking done, then
+update this file and commit after each module.
