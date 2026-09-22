@@ -194,7 +194,17 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   return type concretely as `dict[str, float | str]` fixes it. 3 offline
   tests + 1 live test passing; starter's gaps correctly raise
   `NotImplementedError`. Links checked (66 unique, all OK).
-- ⬜ Project: multi-agent content pipeline
+- ✅ Project: multi-agent content pipeline -- 3 specialized stages
+  (researcher, writer, critic) reusing Module 12's "explicit status, not
+  inferred success" discipline (a failed research stage escalates
+  immediately, no draft/critique calls) plus Module 08's evaluator-optimizer
+  loop shape for the writer/critic revision cycle (bounded by
+  `max_revisions`, escalates -- doesn't silently claim success -- if never
+  approved). 7 tests passing covering first-try success, one revision,
+  research failure, and exhausted revisions with exact model-call-count
+  assertions; starter's gaps correctly raise `NotImplementedError`. 194
+  passed, 9 skipped repo-wide; links checked (66 unique, all OK). **Level 3
+  and its interleaved projects are now fully complete.**
 
 ## Level 4 -- Specialized agents
 
@@ -270,33 +280,26 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Level 3 is now complete. Build the two interleaved projects next, under
-`projects/03-mcp-public-api-server/` and `projects/04-multi-agent-content-
-pipeline/` (confirm exact directory naming against the existing
-`projects/01-research-assistant/` and `projects/02-customer-support-agent/`
-convention before creating them), each with its own README/spec, reusing
-`shared/` and prior labs rather than introducing new concepts:
-
-1. **MCP server for a real public API** -- reuse Module 10's
-   `mcp.server.MCPServer` pattern (`labs/01-mcp-server-and-client/`) to wrap a
-   real, free, public API (no key required, or a free-tier key documented in
-   `.env.example`) as MCP tools. Verify the chosen API's current terms of
-   use/rate limits before committing to it (Ground Rule 1 -- don't assume a
-   free API from training data is still free or unchanged). Test the server
-   in-process the same way Module 10 did (`Client(mcp_server_instance)`), no
-   live network calls required for the default offline test suite; gate any
-   real-network test behind `@pytest.mark.live`.
-2. **Multi-agent content pipeline** -- reuse this module's supervisor-worker
-   pattern (`curriculum/12-multi-agent-systems/labs/01-supervisor-worker/`)
-   for a concrete content-production task (e.g. research -> draft -> critique
-   -> revise), with workers scoped per lesson 01's context-budget note (each
-   worker gets only its own sub-task, not the whole pipeline's history), and
-   explicit worker status per lesson 02 (no synthesis/publish step on a
-   failed worker).
-
-After both projects, start **Level 4, Module 13 (Coding agents)**: sandboxed
-code execution (`shared/sandbox/code_sandbox.py`, already built), repo
-navigation, a test-driven agent loop, and how terminal coding agents work,
-with a lab that fixes a failing test in a small bundled sample repo running
-inside `shared/sandbox/`. Run each solution's tests before marking done, then
-update this file and commit after each project/module.
+Level 3 and both interleaved projects are complete. Start **Level 4, Module
+13 (Coding agents)** under `curriculum/13-coding-agents/`, following the same
+per-module structure used so far (README, lessons/, examples/, labs/NN-name/
+{README,starter,solution,tests}, quiz.md, pitfalls.md, resources.md). Cover:
+sandboxed code execution (reuse `shared/sandbox/code_sandbox.py`, already
+built and tested -- don't rebuild it, wire an agent up to it), repo
+navigation (reading/searching/editing files in a small sample repo), a
+test-driven agent loop (agent edits code, runs the test suite, iterates until
+it passes or hits a step budget -- this is Module 04's ReAct loop plus
+Module 09's step-budget discipline, applied to code), and a short lesson on
+how real terminal coding agents work at a conceptual level (verify current
+claims about e.g. Claude Code/Codex CLI architecture before writing this --
+don't rely on stale training-data assumptions, per Ground Rule 1). The lab:
+an agent that fixes one or more failing tests in a small bundled sample repo
+(a handful of files, a deliberately introduced bug, a pytest suite), running
+entirely inside `shared/sandbox/` so the agent can never touch the real
+filesystem/shell outside the sandbox. No API key needed for the default
+tests -- script the mock provider's tool-call sequence the same way Module
+04's ReAct lab did. After Module 13, continue to Module 14 (Browser &
+computer-use agents), Module 15 (Voice & multimodal agents), then the
+"data-analysis agent with a code sandbox" project closes out Level 4. Run
+each solution's tests before marking done, then update this file and commit
+after each module/project.
