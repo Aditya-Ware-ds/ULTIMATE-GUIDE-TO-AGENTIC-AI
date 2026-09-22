@@ -149,7 +149,26 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   code, then executed every code sample directly to confirm it runs -- see
   Module 10's pitfalls.md for this as a general lesson about fast-moving
   specs. Links checked (47 unique, all OK).
-- ⬜ 11 Frameworks (all 9: LangGraph, OpenAI Agents SDK, Claude Agent SDK, Google ADK, CrewAI, Microsoft Agent Framework, Pydantic AI, smolagents, LlamaIndex Workflows)
+- ✅ 11 Frameworks -- **all 9 built and tested**, per the user's explicit "all 9,
+  full builds" decision: LangGraph, OpenAI Agents SDK, Claude Agent SDK,
+  Google ADK, CrewAI, Microsoft Agent Framework, Pydantic AI, smolagents,
+  LlamaIndex Workflows. Same reference agent (a calculator tool answering
+  "what is 15*7+3") implemented once per framework, each with its own
+  starter/solution/tests. Every framework's actual current API was verified
+  by installing it and using `dir()`/`inspect.signature()` directly (several
+  search results / tutorials described stale, pre-rework APIs -- see the
+  module's pitfalls.md). 2 lessons (why frameworks exist; a comparison matrix
+  written *after* all 9 were actually built, not from marketing pages), plus
+  per-module quiz/pitfalls/resources. Frameworks live outside the default
+  dependency set (`uv run --with <package>`, not persistent groups --
+  Microsoft's `agent-framework` needs `mcp<2`, this project needs `mcp>=2`,
+  which broke `uv sync` outright when tried as a group); each lab's tests use
+  `pytest.importorskip` so `make test` stays green without any framework
+  installed (178 passed, 9 skipped). **Claude Agent SDK is a documented
+  exception**: it wraps the real Claude Code agent loop with no model-
+  injection point, so only its tool-definition/arithmetic logic is offline-
+  testable; its full agent-loop test is `@pytest.mark.live` (needs a real key,
+  not run in this session). Links checked (61 unique, all OK).
 - ⬜ 12 Multi-agent systems
 - ⬜ Project: MCP server for a real public API
 - ⬜ Project: multi-agent content pipeline
@@ -228,39 +247,24 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 3, Module 11 (Frameworks)** -- the largest single module in the
-plan. Per the user's explicit decision (see PLAN.md), build the **same
-reference agent** as a full, tested implementation in **all 9** current major
-frameworks: LangGraph, OpenAI Agents SDK, Claude Agent SDK, Google ADK,
-CrewAI, Microsoft Agent Framework, Pydantic AI, smolagents, LlamaIndex
-Workflows. End with a verified comparison matrix + "how to choose" guide.
-
-**Suggested approach given the scale** (not yet started, open to revision):
-1. Pick ONE simple reference agent shape reused across all 9: a ReAct-style
-   agent with a single calculator tool answering a basic math question --
-   simple enough to implement 9x without excessive duplicated effort, complex
-   enough to show each framework's tool-calling and loop syntax meaningfully.
-2. For EACH framework: (a) verify its current API by installing it and
-   inspecting directly (`dir()`/`inspect.signature()`), the same way Module 10
-   caught stale `mcp` docs -- do not trust search-result code samples alone,
-   several of these frameworks changed significantly in 2026 per PLAN.md's
-   research (e.g. Microsoft Agent Framework GA'd April 2026 merging
-   AutoGen+Semantic Kernel); (b) find or build a way to test offline without a
-   real API key -- most frameworks support a custom/fake chat-model class for
-   testing (check each framework's own testing docs first); (c) build the
-   reference agent + tests; (d) note framework-specific dependencies added to
-   `pyproject.toml` (expect this to be a lot of new dependencies -- consider
-   an optional dependency group per framework, e.g. `--group framework-langgraph`,
-   rather than bloating the default install for every learner).
-3. If a framework genuinely cannot be tested offline within reasonable effort,
-   do not fabricate a passing test -- mark it clearly as `UNVERIFIED`/partial
-   in this file and the module's own README, per Ground Rule 2.
-4. Build the comparison matrix + "how to choose" guide only after all 9 are
-   actually built and tested, so it reflects real, verified experience.
-
-This module will likely take substantially longer than prior modules --
-budget accordingly and consider committing incrementally per-framework
-(e.g. one commit per framework lab, plus a final commit for the comparison
-matrix) rather than one giant commit, so a resumed session can pick up
-mid-module from this file if needed. Run each solution's tests before marking
-that framework done, then update this file and commit.
+Build **Level 3, Module 12 (Multi-agent systems)** -- the last module of
+Level 3. Lessons on supervisor, hierarchical, handoffs, swarm, and debate
+topologies; failure modes; and when multi-agent is a mistake, under
+`curriculum/12-multi-agent-systems/`, following the same per-module structure
+used so far. Per the approved plan, the lab is a supervisor-worker system
+with 3 specialized workers, built with **no framework** (hand-rolled, using
+Module 07/08's agent-loop and orchestrator-workers patterns directly), with
+callouts in the lesson text to how Module 11's 9 frameworks would express the
+same topology (you now have real, verified experience with all 9 to draw on
+for this -- e.g. LangGraph's explicit graph, CrewAI's role-based crew, Google
+ADK's multi-agent support). Cover concrete failure modes (infinite handoff
+loops, workers duplicating work, a supervisor that can't tell when a worker
+actually finished) since Module 04's stopping-condition discipline applies at
+the multi-agent level too, just with more failure surface. After this module,
+Level 3 is complete -- build the two interleaved projects next: **"MCP server
+for a real public API"** (reusing Module 10's MCP patterns against a real,
+free public API -- verify current terms of use/rate limits before choosing
+one) and **"multi-agent content pipeline"** (reusing this module's
+supervisor-worker pattern), before starting Level 4 (Module 13, Coding
+agents). Run the solution's tests before marking done, then update this file
+and commit.
