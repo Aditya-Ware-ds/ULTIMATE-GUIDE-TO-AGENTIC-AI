@@ -32,6 +32,16 @@ docs = [
     "mkdocs-mermaid2-plugin>=1.1.0",
     "mkdocs-include-markdown-plugin>=6.0.0",
 ]
+# NOTE: Module 11's 9 frameworks are deliberately NOT declared as persistent
+# dependency-groups here. Several have transitive requirements that directly
+# conflict with this project's own dependencies (e.g. Microsoft's
+# agent-framework requires mcp<2, this project requires mcp>=2) or with each
+# other. uv resolves one unified lockfile across the base project + whichever
+# groups you sync, so any such conflict makes `uv sync` fail outright, for
+# everyone, regardless of which group was requested. Instead, each framework
+# lab's README gives an exact `uv run --with <package>... pytest ...` command,
+# which resolves an ephemeral, isolated environment for that one invocation
+# and never touches uv.lock. See curriculum/11-frameworks/README.md.
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
