@@ -169,7 +169,19 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   injection point, so only its tool-definition/arithmetic logic is offline-
   testable; its full agent-loop test is `@pytest.mark.live` (needs a real key,
   not run in this session). Links checked (61 unique, all OK).
-- ⬜ 12 Multi-agent systems
+- ✅ 12 Multi-agent systems -- 3 lessons (topologies: supervisor-worker,
+  hierarchical, handoff, swarm, debate; concrete failure modes: infinite
+  handoff loops, duplicated work, ambiguous worker-success signals, cascading
+  cost; when multi-agent is a mistake, with a decision process), 2 runnable
+  examples (`supervisor_worker_demo.py`, `handoff_budget_demo.py`, both
+  verified), 1 lab: hand-rolled supervisor-worker with 3 specialized workers
+  (researcher/writer/critic), **no framework** -- built directly on Module
+  08's orchestrator-workers signature. The supervisor requires an explicit
+  `"status"` field from workers and escalates (without calling synthesis)
+  rather than inferring success from mere output, per lesson 02's core
+  lesson; 6 tests passing, starter's gaps correctly raise
+  `NotImplementedError`. Full quiz/pitfalls/resources written. 184 passed, 9
+  skipped repo-wide; links checked (65 unique, all OK).
 - ⬜ Project: MCP server for a real public API
 - ⬜ Project: multi-agent content pipeline
 
@@ -247,24 +259,33 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 3, Module 12 (Multi-agent systems)** -- the last module of
-Level 3. Lessons on supervisor, hierarchical, handoffs, swarm, and debate
-topologies; failure modes; and when multi-agent is a mistake, under
-`curriculum/12-multi-agent-systems/`, following the same per-module structure
-used so far. Per the approved plan, the lab is a supervisor-worker system
-with 3 specialized workers, built with **no framework** (hand-rolled, using
-Module 07/08's agent-loop and orchestrator-workers patterns directly), with
-callouts in the lesson text to how Module 11's 9 frameworks would express the
-same topology (you now have real, verified experience with all 9 to draw on
-for this -- e.g. LangGraph's explicit graph, CrewAI's role-based crew, Google
-ADK's multi-agent support). Cover concrete failure modes (infinite handoff
-loops, workers duplicating work, a supervisor that can't tell when a worker
-actually finished) since Module 04's stopping-condition discipline applies at
-the multi-agent level too, just with more failure surface. After this module,
-Level 3 is complete -- build the two interleaved projects next: **"MCP server
-for a real public API"** (reusing Module 10's MCP patterns against a real,
-free public API -- verify current terms of use/rate limits before choosing
-one) and **"multi-agent content pipeline"** (reusing this module's
-supervisor-worker pattern), before starting Level 4 (Module 13, Coding
-agents). Run the solution's tests before marking done, then update this file
-and commit.
+Level 3 is now complete. Build the two interleaved projects next, under
+`projects/03-mcp-public-api-server/` and `projects/04-multi-agent-content-
+pipeline/` (confirm exact directory naming against the existing
+`projects/01-research-assistant/` and `projects/02-customer-support-agent/`
+convention before creating them), each with its own README/spec, reusing
+`shared/` and prior labs rather than introducing new concepts:
+
+1. **MCP server for a real public API** -- reuse Module 10's
+   `mcp.server.MCPServer` pattern (`labs/01-mcp-server-and-client/`) to wrap a
+   real, free, public API (no key required, or a free-tier key documented in
+   `.env.example`) as MCP tools. Verify the chosen API's current terms of
+   use/rate limits before committing to it (Ground Rule 1 -- don't assume a
+   free API from training data is still free or unchanged). Test the server
+   in-process the same way Module 10 did (`Client(mcp_server_instance)`), no
+   live network calls required for the default offline test suite; gate any
+   real-network test behind `@pytest.mark.live`.
+2. **Multi-agent content pipeline** -- reuse this module's supervisor-worker
+   pattern (`curriculum/12-multi-agent-systems/labs/01-supervisor-worker/`)
+   for a concrete content-production task (e.g. research -> draft -> critique
+   -> revise), with workers scoped per lesson 01's context-budget note (each
+   worker gets only its own sub-task, not the whole pipeline's history), and
+   explicit worker status per lesson 02 (no synthesis/publish step on a
+   failed worker).
+
+After both projects, start **Level 4, Module 13 (Coding agents)**: sandboxed
+code execution (`shared/sandbox/code_sandbox.py`, already built), repo
+navigation, a test-driven agent loop, and how terminal coding agents work,
+with a lab that fixes a failing test in a small bundled sample repo running
+inside `shared/sandbox/`. Run each solution's tests before marking done, then
+update this file and commit after each project/module.
