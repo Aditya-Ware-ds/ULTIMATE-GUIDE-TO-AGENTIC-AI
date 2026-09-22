@@ -1,0 +1,9 @@
+Space Shuttle Program (1981-2011)
+
+The Space Shuttle was the first reusable crewed spacecraft, flown by NASA from
+1981 to 2011. The first flight, STS-1, launched on April 12, 1981, with
+Columbia. The fleet included five orbiters: Columbia, Challenger, Discovery,
+Atlantis, and Endeavour. The program suffered two fatal accidents: Challenger
+disintegrated shortly after launch on January 28, 1986, and Columbia
+disintegrated during reentry on February 1, 2003. The Shuttle was used to
+build the International Space Station starting in 1998.

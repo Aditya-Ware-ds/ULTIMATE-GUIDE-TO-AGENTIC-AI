@@ -86,7 +86,14 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   sites, Wikipedia included, 403 the default httpx UA). Links checked (37
   unique, all OK). **Levels 0-1 (Modules 00-06) are now fully complete** except
   the interleaved project below.
-- ⬜ Project: research assistant with citations
+- ✅ Project: research assistant with citations -- integration project reusing
+  Module 06's retrieval patterns and Modules 03-05's agent loop, adding
+  citation extraction/verification (`extract_citations`/`verify_citations`)
+  that flags a fabricated source name even though it "looks" like a real
+  citation -- a concrete, testable instance of Module 01 lesson 5's
+  hallucination point. 5 bundled spaceflight-history documents,
+  starter/solution/tests split (same pattern as labs), 12 tests passing
+  against `solution/`, all failing/erroring correctly against `starter/`.
 
 ## Level 2 -- Capable agents
 
@@ -177,21 +184,19 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build the **"research assistant with citations" project** under `projects/`
-(per the approved plan, this is interleaved after Level 1/RAG, before Level 2
-begins). It should be a portfolio-sized integration exercise reusing
-`shared.llm` plus the patterns from Modules 03-06 (tool calling, agent loop,
-context compaction, agentic RAG) rather than introducing new concepts --
-a small standalone project with its own README (spec + acceptance criteria),
-source, and tests, following the same starter/solution/tests split as a lab
-where practical, or a single complete solution with tests if a starter/gap
-split doesn't fit a project-sized build (use judgment; document the choice in
-the project's own README). It should demonstrate: retrieval over a small
-document set (reuse/extend Module 06's `rag.py` patterns), an agent loop that
-decides when to search, and **citations** in the final answer (which source
-document/chunk each claim came from) -- citation-tracking is new territory
-this project should introduce carefully (verify current best-practice framing
-for citation faithfulness before writing, since a model can still fabricate a
-citation even when asked for one -- Module 01 lesson 05's hallucination point
-applies directly). After this project, move to **Level 2, Module 07 (Memory &
-state)**. Run all tests before marking done, then update this file and commit.
+Build **Level 2, Module 07 (Memory & state)**: lessons on short-term vs.
+long-term memory, episodic vs. semantic memory, memory stores, and
+checkpointing/resumption, under `curriculum/07-memory-and-state/`, following
+the same per-module structure used so far. Per the approved plan, the lab
+should add checkpointed, resumable state to the running agent pattern (a
+"kill-and-resume" test: serialize agent state mid-run, reload it in a fresh
+process/object, and prove it continues correctly) -- this is meaningfully new
+territory versus Modules 03-06 (which never needed to persist state across
+process boundaries), so budget real design time for the serialization format
+(plain JSON of the `Message` list plus any loop-specific state, e.g. step
+count, is likely sufficient and keeps this offline-testable with no new
+dependencies). Distinguish this clearly from Module 05's compaction (shrinking
+context *within* a run) and Module 06's retrieval (finding *documents*) --
+memory here means deliberately persisting an agent's *own state* across
+separate runs. Run the solution's tests before marking done, then update this
+file and commit.
