@@ -230,7 +230,32 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   `pyproject.toml`'s pytest config so the repo's own `make test` never
   collects the sample repo's deliberately-failing fixture test. 204 passed,
   9 skipped repo-wide; links checked (70 unique, all OK).
-- ⬜ 14 Browser & computer-use agents
+- ✅ 14 Browser & computer-use agents -- 3 lessons: browser automation
+  (Playwright, verified current on 2026-09-22, DOM/selector-based, a small
+  typed `goto`/`click`/`get_text` action vocabulary plus a URL allowlist
+  mirroring Module 13's path-scoping); screenshots vs. the DOM (**corrected
+  a stale working assumption while writing this**: Claude's, OpenAI's, and
+  Gemini's computer-use tools were checked directly against each vendor's
+  current docs on 2026-09-22 and all three currently use screenshot +
+  pixel-coordinate perception only, *not* an accessibility tree, contrary to
+  the original PLAN.md's landscape note -- corrected here per Ground Rule 1);
+  reliability tricks (explicit wait conditions over fixed sleeps,
+  retry-only-on-transient-failures, narrow action vocabulary as a
+  reliability technique, not just a security one). 1 runnable example
+  (`browser_tools_demo.py`, verified, uses a fake session -- no real browser
+  needed). 1 lab: a browser-automation agent (Module 04's ReAct loop) against
+  a bundled local `sample_site/index.html` whose "View details" button
+  creates a real DOM element on click (so the task genuinely requires a
+  click before a read, not just one page-read). Offline tests use a
+  hand-written `FakeBrowserSession` that mirrors the real page's actual
+  click-then-reveal behavior exactly; 8 offline tests passing; starter's
+  gaps correctly raise `NotImplementedError`. **One `@pytest.mark.live` test
+  drives a real Playwright browser and was written but not run this
+  session** -- `uv run --with "playwright>=1.47" python -c "from
+  playwright.sync_api import ..."` did not finish downloading within 120s in
+  this environment; run it manually per the lab README before trusting the
+  live path. 212 passed, 9 skipped, 2 deselected repo-wide; links checked
+  (74 unique, all OK).
 - ⬜ 15 Voice & multimodal agents
 - ⬜ Project: data-analysis agent with a code sandbox
 
@@ -301,31 +326,30 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 4, Module 14 (Browser & computer-use agents)** under
-`curriculum/14-browser-and-computer-use-agents/`, following the same
-per-module structure used so far. Before writing lessons, verify current
-claims (Ground Rule 1) about browser/computer-use approaches -- the approved
-plan's landscape notes (from 2026-09-22) say the converged 2026 pattern is
-accessibility-tree + screenshot with a small typed action vocabulary and a
-step-budgeted loop (Claude's computer-use tool GA'd 2026-08-19; OpenAI
-folded Operator into ChatGPT "agent mode" plus Codex Background Computer Use;
-Gemini Computer Use blends DOM/accessibility tree with screenshots) --
-re-check this is still accurate before treating it as ground truth, since
-it's the kind of claim that goes stale fastest. Cover: browser automation
-basics, screenshot-vs-DOM/accessibility-tree tradeoffs, and reliability
-tricks (retry-on-ambiguous-element, explicit wait conditions instead of
-fixed sleeps). Lab: a headless-browser task agent (Playwright is the
-verified current standard -- confirm before adding it as a dependency, since
-it's a new external dependency this repo hasn't needed yet) navigating a
-small bundled local HTML test page (not the live internet, so the lab stays
-offline-testable and stable), reusing Module 13's sandboxing/tool-scoping
-discipline (Module 13's `resolve_within_repo`-style scoping generalizes to
-"the agent can only navigate pages you've explicitly allowed"). After Module
-14, build Module 15 (Voice & multimodal agents -- a vision-input lab
-answering questions about a bundled image is required; a live realtime-audio
-architecture walkthrough is written but not required to pass offline, per
-the approved plan), then the "data-analysis agent with a code sandbox"
-project (reusing `shared/sandbox/code_sandbox.py` again, plus Module 06's
-RAG/Module 13's coding-agent patterns) closes out Level 4. Run each
-solution's tests before marking done, then update this file and commit
-after each module/project.
+Build **Level 4, Module 15 (Voice & multimodal agents)** under
+`curriculum/15-voice-and-multimodal-agents/`, the last module of Level 4,
+following the same per-module structure used so far. Per the approved plan:
+a vision-input lab is required (an agent that answers questions about a
+bundled image -- pick a small, simple, clearly-licensed image to bundle, or
+generate a trivial synthetic one (e.g. a PIL-drawn shape/chart) to avoid any
+licensing ambiguity), tested offline via the mock provider (script a
+scripted response the same way every other lab does -- the mock provider
+doesn't need to "see" the image for the *agent loop* tests to be valid, only
+the image-loading/encoding step needs real verification). A written
+realtime-audio architecture walkthrough (latency budgets, streaming
+audio in/out, turn-taking) is required content but not required to have a
+runnable, passing-offline lab -- real-time audio API calls should be
+cost/live-gated if any code is included at all, per the approved plan.
+Before writing, verify current claims about realtime voice APIs (Ground Rule
+1 -- this is exactly the kind of claim Module 14 just demonstrated going
+stale) rather than relying on training-data assumptions. After Module 15,
+Level 4 closes with the **"data-analysis agent with a code sandbox"**
+project (reuse `shared/sandbox/code_sandbox.py` directly -- an agent that
+writes and runs Python to analyze a small bundled dataset, e.g. a CSV,
+inside the sandbox; combine with Module 06's retrieval patterns if the task
+benefits from it). Then start Level 5 (Module 16, Evaluation). Also worth
+following up when convenient: the live Playwright test from Module 14's lab
+was written but not executed (see Module 14's PROGRESS entry above) -- run
+it manually if/when this environment has reliable network access for
+`playwright install`. Run each solution's tests before marking done, then
+update this file and commit after each module/project.

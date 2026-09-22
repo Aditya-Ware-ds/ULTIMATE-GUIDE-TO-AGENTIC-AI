@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Wireless Mouse</title></head>
+<body>
+  <h1 id="title">Wireless Mouse</h1>
+  <p id="price">$24.99</p>
+  <button id="details-btn" onclick="
+    var d = document.createElement('div');
+    d.id = 'details';
+    d.textContent = 'Battery life: 6 months. Color: black.';
+    document.body.appendChild(d);
+  ">View details</button>
+</body>
+</html>
