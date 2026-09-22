@@ -55,7 +55,13 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 1 -- First agent, no frameworks
 
-- ⬜ 03 Tool use / function calling
+- ✅ 03 Tool use / function calling -- 3 lessons (tool schemas, dispatch &
+  execution, error handling & retries), 3 runnable examples (verified), 1 lab
+  (hand-written calculator + weather tool-calling loop: `ast`-based safe
+  arithmetic, no `eval()`; starter/solution/tests, 14 tests passing against
+  `solution/`, 13/14 correctly failing against `starter/` -- the one that
+  trivially passes is an intentionally lenient `pytest.raises(Exception)`
+  check, noted but not worth over-engineering). Links checked (27 unique, all OK).
 - ⬜ 04 The agent loop from scratch
 - ⬜ 05 Context engineering
 - ⬜ 06 Retrieval & agentic RAG
@@ -150,16 +156,16 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 1, Module 03 (Tool use / function calling)**: lessons on tool
-schema design, dispatch, and error handling/retries, under
-`curriculum/03-tool-use/`, following the same per-module structure used so far.
-This is the first Level 1 module ("first agent, no frameworks") -- per Ground
-Rule 6, this and Module 04 must be hand-rolled with no framework. Lab (per the
-approved plan): a hand-written calculator + weather-lookup tool-calling loop
-using `shared.llm` directly (mock provider scripts the tool-call turns; a
-`shared/sandbox/`-style pattern is NOT needed here since these are pure-Python
-tools with no code execution, but keep that distinction explicit in the lesson).
-Verify each provider's current tool-definition wire shape is still accurate
-(lesson content can reference `shared/llm/providers/*.py`, which already
-implement this) before writing. Run the solution's tests before marking done,
-then update this file and commit.
+Build **Level 1, Module 04 (The agent loop from scratch)**: lessons on
+observe->think->act, stopping conditions, max-steps, and ReAct, under
+`curriculum/04-agent-loop/`, following the same per-module structure used so
+far. This module should explicitly generalize Module 03's `run_tool_loop` (the
+lab there is essentially a proto-agent-loop already) into a proper ReAct-style
+agent loop: the lesson should reference and build on
+`curriculum/03-tool-use/labs/01-tool-calling-loop/solution/tools.py` rather than
+starting from zero. Lab (per the approved plan): a hand-rolled ReAct agent
+answering multi-hop questions with 2-3 tools, tested against the mock
+provider's scripted multi-step traces (this lab can reuse or extend Module 03's
+calculator/weather tools plus add one more, e.g. a simple fake
+"search"/lookup tool, to make multi-hop question-answering meaningful). Run the
+solution's tests before marking done, then update this file and commit.
