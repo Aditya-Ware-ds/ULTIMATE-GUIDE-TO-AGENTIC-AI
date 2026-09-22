@@ -67,7 +67,14 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   answering 2-hop questions with search + calculate tools: starter/solution/tests,
   9 tests passing against `solution/`, all 9 correctly failing against
   `starter/`). Links checked (29 unique, all OK).
-- ⬜ 05 Context engineering
+- ✅ 05 Context engineering -- 3 lessons (what goes in context, compaction &
+  summarization, context rot), 3 runnable examples (verified; the context-rot
+  demo uses explicitly-labeled made-up numbers for shape illustration, not real
+  measurements -- resources.md links to the real Chroma study for actual
+  figures), 1 lab (agent loop with compaction, keeping a real `tiktoken`-based
+  token count under budget across an 18+ step scripted run: starter/solution/
+  tests, 8 tests passing against `solution/`, all 8 correctly failing against
+  `starter/`). Links checked (33 unique, all OK).
 - ⬜ 06 Retrieval & agentic RAG
 - ⬜ Project: research assistant with citations
 
@@ -160,15 +167,20 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 1, Module 05 (Context engineering)**: lessons on what goes in the
-context window, system prompts, tool-description design, compaction/
-summarization, and context rot, under `curriculum/05-context-engineering/`,
-following the same per-module structure used so far. This module directly
-extends Module 04's agent loop: the lab (per the approved plan) should add a
-compaction strategy to Module 04's `run_react_agent`-style loop and prove via a
-test that it survives a long trace that would otherwise overflow a (small,
-test-friendly) simulated context budget -- reuse `shared.llm`'s `Usage`/token
-counting concepts from Module 01 rather than inventing a new token-counting
-approach. Verify current guidance on context rot / long-context degradation
-before writing (Ground Rule 1) -- this is an active, fast-moving research area.
-Run the solution's tests before marking done, then update this file and commit.
+Build **Level 1, Module 06 (Retrieval & agentic RAG)** -- the last module of
+Level 1. Lessons on chunking, embeddings, vector stores, hybrid search,
+reranking, and agent-driven retrieval, under `curriculum/06-retrieval-and-rag/`,
+following the same per-module structure used so far. Per the approved plan,
+use a simple local/embedded vector store (no paid vector DB) and an
+offline-testable fake embedding function (real embedding models need an API
+key; Module 01's `embeddings_demo.py` toy hashing-based embedding is a
+reasonable pattern to reuse or reference for offline testability, but this
+module should also show what a *real* embedding call looks like via
+`shared.llm`-adjacent code, clearly marked live-only). Lab (per the approved
+plan): agentic RAG over a small bundled document set (a handful of short text
+files committed to the lab's `starter/`/`solution/` directories), offline-
+testable with the fake embedding function. This closes out Level 1 -- after
+this module, also build the **Level 1 project** ("research assistant with
+citations," per ROADMAP.md / PLAN.md) under `projects/` before moving to Level 2
+Module 07. Run the solution's tests before marking done, then update this file
+and commit.
