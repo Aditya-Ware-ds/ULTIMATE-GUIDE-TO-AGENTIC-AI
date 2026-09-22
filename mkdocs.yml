@@ -1,0 +1,58 @@
+site_name: Agentic AI Mastery
+site_description: A complete, open-source curriculum for AI agents, from zero to expert.
+
+# docs/ holds thin pages that {% include-markdown %} the real content from the repo
+# root and from curriculum/ -- so README.md, ROADMAP.md, and every module's
+# README/lessons stay the single source of truth (rendered natively on GitHub) and
+# the docs site has no duplicated prose to drift out of sync.
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+
+plugins:
+  - search
+  - mermaid2
+  - include-markdown:
+      rewrite_relative_urls: true
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Roadmap: roadmap.md
+  - Setup: setup.md
+  - How to use this repo: how-to-use.md
+  - Glossary: glossary.md
+  - Progress: progress.md
