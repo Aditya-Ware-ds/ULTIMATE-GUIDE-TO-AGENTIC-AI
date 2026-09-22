@@ -182,7 +182,18 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   lesson; 6 tests passing, starter's gaps correctly raise
   `NotImplementedError`. Full quiz/pitfalls/resources written. 184 passed, 9
   skipped repo-wide; links checked (65 unique, all OK).
-- ⬜ Project: MCP server for a real public API
+- ✅ Project: MCP server for a real public API -- a real
+  `mcp.server.MCPServer` wrapping [Open-Meteo](https://open-meteo.com/en/docs)
+  (verified 2026-09-22: no API key needed for non-commercial use) with one
+  tool, `get_current_weather(latitude, longitude)`. Default offline tests hit
+  a tiny local HTTP server shaped like Open-Meteo's real response (same
+  technique as Module 00's async-fetch-cli lab), not the real internet; one
+  `@pytest.mark.live` test hits the real API for real and passes. **Note**:
+  a tool returning a bare `-> dict` annotation gets no MCP `structured_content`
+  (verified empirically -- `output_schema` stays `None`); annotating the
+  return type concretely as `dict[str, float | str]` fixes it. 3 offline
+  tests + 1 live test passing; starter's gaps correctly raise
+  `NotImplementedError`. Links checked (66 unique, all OK).
 - ⬜ Project: multi-agent content pipeline
 
 ## Level 4 -- Specialized agents
