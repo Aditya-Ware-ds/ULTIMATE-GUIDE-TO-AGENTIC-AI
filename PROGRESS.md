@@ -30,7 +30,12 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 0 -- Foundations
 
-- ⬜ 00 Programming prerequisites
+- ✅ 00 Programming prerequisites -- 5 lessons, 4 runnable examples (all executed
+  and verified), 1 lab (async fetch + JSON CLI: starter/solution/tests, 10 tests
+  passing against `solution/`, correctly failing against unimplemented
+  `starter/`), quiz, pitfalls, resources (verified 2026-09-22). Also added
+  `shared/testing/lab_loader.py` (+ its own 4 tests) as the reusable
+  starter-vs-solution test-loading pattern every future lab will use.
 - ⬜ 01 How LLMs work
 - ⬜ 02 Talking to LLMs
 
@@ -113,22 +118,31 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   `shared/llm/pricing.py`** were verified via web search on 2026-09-22 (sources
   inline in `pricing.py`). Re-verify before Level 0/Level 2 lessons that quote
   specific prices, since this is exactly the kind of claim that goes stale fastest.
-- **Docs-site cross-links show MkDocs warnings**: root docs use GitHub-relative
-  links (`[ROADMAP.md](ROADMAP.md)`) which are correct on GitHub but don't resolve
-  to the right site URL when rendered through `docs/*.md`'s include-markdown
-  wrappers (see Phase 0 note above). `make docs` succeeds; `mkdocs build --strict`
-  does not. Low priority -- would need either a link-rewriting plugin or
-  per-context link syntax to fully fix.
+- **Docs-site cross-links show MkDocs warnings**: root *and curriculum* docs use
+  GitHub-relative links (e.g. `[ROADMAP.md](ROADMAP.md)`,
+  `[lessons/01-...](lessons/01-python-essentials.md)`) which are correct on
+  GitHub but don't resolve to the right site URL when mirrored through
+  `docs/**/*.md`'s `scripts/sync_docs.py`-generated include-markdown wrappers.
+  `make docs` succeeds (non-fatal warnings); `mkdocs build --strict` does not.
+  Low priority -- content and navigation both work, just not every in-page link
+  on the built site; would need a link-rewriting plugin to fully fix. `docs/`
+  also currently has no explicit `nav:` entries for curriculum/projects/etc.
+  pages (only the 6 root pages are in `nav:`) -- they're still built and
+  searchable, just not in the top nav. Add nav entries (or an
+  automatic-nav plugin) once there's enough curriculum content to be worth it.
 - **GitHub repo URL**: `.github/workflows/ci.yml` doesn't need one (checkout is
   automatic), but `mkdocs.yml` has no `repo_url` set since this repo hasn't been
   pushed anywhere yet. Add one once it has a remote.
 
 ## Exact next step
 
-Build **Level 0, Module 00 (Programming prerequisites)**: lessons on Python
-essentials for this repo, JSON, HTTP/REST, async/await, git, venvs/uv, terminal,
-under `curriculum/00-programming-prerequisites/`, following the per-module
-structure in the approved plan (`README.md`, `lessons/`, `examples/`, `labs/`,
-`quiz.md`, `pitfalls.md`, `resources.md`). Lab: a small async HTTP + JSON CLI tool
-(no LLM) with starter/solution/tests. Run the solution's tests before marking done,
-then update this file and commit.
+Build **Level 0, Module 01 (How LLMs work)**: lessons on tokens/tokenizers,
+context windows, sampling (temperature/top-p), embeddings, reasoning models,
+hallucination and other limitations, under `curriculum/01-how-llms-work/`,
+following the same per-module structure Module 00 used (`README.md`, `lessons/`,
+`examples/`, `labs/`, `quiz.md`, `pitfalls.md`, `resources.md`). Lab (per the
+approved plan): a token-counting + sampling-parameter visualizer using a real
+tokenizer library (`tiktoken` is already a dependency) -- no API key needed.
+Verify current claims about reasoning-model behavior and tokenizer specifics
+against official docs before writing the lessons (Ground Rule 1). Run the
+solution's tests before marking done, then update this file and commit.

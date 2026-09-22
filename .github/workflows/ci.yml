@@ -23,7 +23,9 @@ jobs:
       - name: Offline tests
         run: uv run pytest
       - name: Build docs
-        run: uv run mkdocs build
+        run: |
+          uv run python scripts/sync_docs.py
+          uv run mkdocs build
 
   check-links:
     runs-on: ubuntu-latest

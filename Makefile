@@ -18,9 +18,11 @@ format:
 	uv run ruff check --fix .
 
 docs:
+	uv run python scripts/sync_docs.py
 	uv run mkdocs build
 
 docs-serve:
+	uv run python scripts/sync_docs.py
 	uv run mkdocs serve
 
 check-links:

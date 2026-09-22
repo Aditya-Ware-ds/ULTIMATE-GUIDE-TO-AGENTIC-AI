@@ -14,7 +14,18 @@ from pathlib import Path
 import httpx
 
 LINK_RE = re.compile(r"\[[^\]]*\]\((https?://[^\s)]+)\)")
-SKIP_HOSTS = ("localhost", "127.0.0.1", "example.com", "example.org")
+SKIP_HOSTS = (
+    "localhost",
+    "127.0.0.1",
+    "example.com",
+    "example.org",
+    # Authenticated provider console pages: they redirect to a login page or
+    # bot-block automated GET/HEAD requests (302/403) even when the link is
+    # correct, so they aren't reliably checkable here. Verify these manually.
+    "aistudio.google.com",
+    "platform.openai.com",
+    "console.anthropic.com",
+)
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
