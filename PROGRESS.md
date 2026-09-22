@@ -62,7 +62,11 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   `solution/`, 13/14 correctly failing against `starter/` -- the one that
   trivially passes is an intentionally lenient `pytest.raises(Exception)`
   check, noted but not worth over-engineering). Links checked (27 unique, all OK).
-- ⬜ 04 The agent loop from scratch
+- ✅ 04 The agent loop from scratch -- 3 lessons (the agent loop, stopping
+  conditions, ReAct pattern), 3 runnable examples (verified), 1 lab (ReAct agent
+  answering 2-hop questions with search + calculate tools: starter/solution/tests,
+  9 tests passing against `solution/`, all 9 correctly failing against
+  `starter/`). Links checked (29 unique, all OK).
 - ⬜ 05 Context engineering
 - ⬜ 06 Retrieval & agentic RAG
 - ⬜ Project: research assistant with citations
@@ -156,16 +160,15 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 1, Module 04 (The agent loop from scratch)**: lessons on
-observe->think->act, stopping conditions, max-steps, and ReAct, under
-`curriculum/04-agent-loop/`, following the same per-module structure used so
-far. This module should explicitly generalize Module 03's `run_tool_loop` (the
-lab there is essentially a proto-agent-loop already) into a proper ReAct-style
-agent loop: the lesson should reference and build on
-`curriculum/03-tool-use/labs/01-tool-calling-loop/solution/tools.py` rather than
-starting from zero. Lab (per the approved plan): a hand-rolled ReAct agent
-answering multi-hop questions with 2-3 tools, tested against the mock
-provider's scripted multi-step traces (this lab can reuse or extend Module 03's
-calculator/weather tools plus add one more, e.g. a simple fake
-"search"/lookup tool, to make multi-hop question-answering meaningful). Run the
-solution's tests before marking done, then update this file and commit.
+Build **Level 1, Module 05 (Context engineering)**: lessons on what goes in the
+context window, system prompts, tool-description design, compaction/
+summarization, and context rot, under `curriculum/05-context-engineering/`,
+following the same per-module structure used so far. This module directly
+extends Module 04's agent loop: the lab (per the approved plan) should add a
+compaction strategy to Module 04's `run_react_agent`-style loop and prove via a
+test that it survives a long trace that would otherwise overflow a (small,
+test-friendly) simulated context budget -- reuse `shared.llm`'s `Usage`/token
+counting concepts from Module 01 rather than inventing a new token-counting
+approach. Verify current guidance on context rot / long-context degradation
+before writing (Ground Rule 1) -- this is an active, fast-moving research area.
+Run the solution's tests before marking done, then update this file and commit.
