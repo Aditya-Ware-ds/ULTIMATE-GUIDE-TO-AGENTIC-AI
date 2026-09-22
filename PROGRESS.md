@@ -256,7 +256,31 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   this environment; run it manually per the lab README before trusting the
   live path. 212 passed, 9 skipped, 2 deselected repo-wide; links checked
   (74 unique, all OK).
-- ⬜ 15 Voice & multimodal agents
+- ✅ 15 Voice & multimodal agents -- **extended `shared/llm/` for the first
+  time since Phase 0**: added `ImageContent` (`media_type` + `data_base64`)
+  and `Message.images: list[ImageContent]`, wired into `AnthropicProvider`
+  only (verified against
+  https://platform.claude.com/docs/en/build-with-claude/vision on
+  2026-09-22: base64 image content blocks, images-before-text ordering,
+  supported formats/token-cost table) -- OpenAI/Gemini/Ollama adapters
+  deliberately and documentedly still ignore `Message.images` (a new,
+  explicit entry below in Open Issues). 2 lessons (vision inputs; realtime
+  voice architecture, verified against OpenAI's current Realtime API docs
+  -- direct audio processing, WebRTC/WebSocket transport, VAD-based
+  turn-taking/barge-in -- conceptual only, no required runnable lab per the
+  approved plan, to avoid a live metered audio dependency). 1 runnable
+  example (`image_encoding_demo.py`, verified, includes a from-scratch
+  minimal PNG encoder). 1 lab: `load_image`/`ask_about_image` against a
+  64x64 synthetic PNG generated with pure Python (`zlib`/`struct`, no
+  Pillow dependency, no licensing ambiguity) baked into
+  `images/red_square_on_blue.png`. 3 offline tests passing (base64
+  round-trip, unsupported-extension rejection, mock-provider message
+  construction); starter's gaps correctly raise `NotImplementedError`.
+  **One `@pytest.mark.live` test against the real Anthropic API was written
+  but not run this session** -- no `ANTHROPIC_API_KEY` was available in
+  this environment; run it manually per the lab README before trusting the
+  live path. 215 passed, 9 skipped, 3 deselected repo-wide; links checked
+  (78 unique, all OK). **Level 4 is now fully complete.**
 - ⬜ Project: data-analysis agent with a code sandbox
 
 ## Level 5 -- Production engineering
@@ -291,6 +315,23 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Open issues / UNVERIFIED items
 
+- **`Message.images` only wired into `AnthropicProvider`**: Module 15 added
+  `ImageContent`/`Message.images` to `shared/llm/types.py` but only
+  `AnthropicProvider` converts it into a real API request; OpenAI, Gemini,
+  and Ollama adapters silently ignore it. Wire in the others once their
+  current image-block shapes are verified the same way (each vendor's
+  format differs and each has changed shape before -- don't guess from this
+  session's Anthropic verification).
+- **Module 15's live vision test not run**: no `ANTHROPIC_API_KEY` was
+  available in this session's environment; run
+  `uv run pytest -m live curriculum/15-voice-and-multimodal-agents/labs/01-vision-qa-agent/tests`
+  manually before trusting the real-API path.
+- **Module 14's live Playwright test not run**: `uv run --with
+  "playwright>=1.47" python -c "from playwright.sync_api import ..."` did
+  not finish downloading within a 120s timeout in this session's
+  environment. Run
+  `uv run --with "playwright>=1.47" playwright install chromium` then the
+  live test manually per that lab's README when network access allows.
 - **Gemini streaming**: `shared/llm/providers/gemini_provider.py`'s `stream()` is a
   non-native fallback (calls `complete()` once, re-chunks the text client-side)
   because the Interactions API's native streaming shape wasn't clearly documented
@@ -326,30 +367,34 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 4, Module 15 (Voice & multimodal agents)** under
-`curriculum/15-voice-and-multimodal-agents/`, the last module of Level 4,
-following the same per-module structure used so far. Per the approved plan:
-a vision-input lab is required (an agent that answers questions about a
-bundled image -- pick a small, simple, clearly-licensed image to bundle, or
-generate a trivial synthetic one (e.g. a PIL-drawn shape/chart) to avoid any
-licensing ambiguity), tested offline via the mock provider (script a
-scripted response the same way every other lab does -- the mock provider
-doesn't need to "see" the image for the *agent loop* tests to be valid, only
-the image-loading/encoding step needs real verification). A written
-realtime-audio architecture walkthrough (latency budgets, streaming
-audio in/out, turn-taking) is required content but not required to have a
-runnable, passing-offline lab -- real-time audio API calls should be
-cost/live-gated if any code is included at all, per the approved plan.
-Before writing, verify current claims about realtime voice APIs (Ground Rule
-1 -- this is exactly the kind of claim Module 14 just demonstrated going
-stale) rather than relying on training-data assumptions. After Module 15,
-Level 4 closes with the **"data-analysis agent with a code sandbox"**
-project (reuse `shared/sandbox/code_sandbox.py` directly -- an agent that
-writes and runs Python to analyze a small bundled dataset, e.g. a CSV,
-inside the sandbox; combine with Module 06's retrieval patterns if the task
-benefits from it). Then start Level 5 (Module 16, Evaluation). Also worth
-following up when convenient: the live Playwright test from Module 14's lab
-was written but not executed (see Module 14's PROGRESS entry above) -- run
-it manually if/when this environment has reliable network access for
-`playwright install`. Run each solution's tests before marking done, then
-update this file and commit after each module/project.
+Level 4 is complete. Build the **"data-analysis agent with a code sandbox"**
+project next, under `projects/05-data-analysis-agent/` (confirm exact
+naming against the `projects/0N-name/` convention already established).
+Reuse `shared/sandbox/code_sandbox.py` directly (already built and tested in
+Phase 0, exercised for real in Module 13): an agent that writes and runs
+Python to analyze a small bundled dataset (e.g. a CSV with a handful of
+columns/rows, bundled in the project directory, not fetched live) inside the
+sandbox, following Module 13's exact discipline -- never `exec()` generated
+code directly, only through `run_python`, with the same reasoning
+(untrusted, model-generated code needs process isolation, a timeout, and a
+restricted environment). The agent's loop should be Module 04's ReAct shape
+again, with a `run_python_analysis(code: str) -> str` tool (or similarly
+named) that returns the sandboxed stdout, and the task should be answerable
+by writing a short pandas/csv-module script and reading its printed output
+-- keep the dataset and task small enough that the whole thing stays
+offline-testable via the mock provider's scripted tool-call sequence, the
+same pattern used in every ReAct-loop lab so far. After this project, start
+**Level 5, Module 16 (Evaluation)** under `curriculum/16-evaluation/`: eval-
+driven development, golden datasets, LLM-as-judge (and its known biases),
+trajectory/tool-call evals, regression suites, and current public benchmarks
+(SWE-bench, GAIA, tau-bench, BrowseComp, WebArena, OSWorld, Terminal-Bench --
+re-verify each is still current and accurately described before citing it,
+per Ground Rule 1, the same discipline that caught the stale computer-use
+claim in Module 14). Lab: a small golden-dataset eval harness plus an
+LLM-as-judge for one earlier agent (e.g. Module 04's ReAct agent or Module
+13's coding agent), runnable offline against the mock provider. Two
+follow-ups noted in Open Issues above are worth revisiting when this
+environment has reliable network access: Module 14's live Playwright test
+and Module 15's live Anthropic vision test were both written but not
+executed this session. Run each solution's tests before marking done, then
+update this file and commit after each project/module.

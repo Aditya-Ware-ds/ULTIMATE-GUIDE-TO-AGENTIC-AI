@@ -10,6 +10,7 @@ from shared.llm.client import LLMClient, get_client
 from shared.llm.mock import MockLLMProvider
 from shared.llm.types import (
     CompletionResponse,
+    ImageContent,
     Message,
     Role,
     StreamChunk,
@@ -24,6 +25,7 @@ __all__ = [
     "get_client",
     "MockLLMProvider",
     "CompletionResponse",
+    "ImageContent",
     "Message",
     "Role",
     "StreamChunk",

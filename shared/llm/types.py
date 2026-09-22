@@ -45,9 +45,23 @@ class ToolResult:
 
 
 @dataclass
+class ImageContent:
+    """A single image attached to a user message (Module 15).
+
+    `media_type` is a supported MIME type (currently wired only into
+    AnthropicProvider, which verified-supports image/jpeg, image/png,
+    image/gif, and image/webp as of 2026-09-22 -- see providers/anthropic_provider.py).
+    """
+
+    media_type: str
+    data_base64: str
+
+
+@dataclass
 class Message:
     role: Role
     content: str | None = None
+    images: list[ImageContent] = field(default_factory=list)
     tool_calls: list[ToolCall] = field(default_factory=list)
     tool_result: ToolResult | None = None
 

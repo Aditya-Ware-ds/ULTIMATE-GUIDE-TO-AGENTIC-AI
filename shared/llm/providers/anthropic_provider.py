@@ -1,9 +1,13 @@
 """Adapter for Anthropic's Messages API.
 
-Verified against https://platform.claude.com/docs/en/api/messages and
-https://platform.claude.com/docs/en/build-with-claude/structured-outputs on
-2026-09-22 (Structured Outputs is GA, no beta header required; the request
-parameter is `output_config: {"format": {"type": "json_schema", "schema": ...}}`).
+Verified against https://platform.claude.com/docs/en/api/messages,
+https://platform.claude.com/docs/en/build-with-claude/structured-outputs, and
+https://platform.claude.com/docs/en/build-with-claude/vision on 2026-09-22
+(Structured Outputs is GA, no beta header required; the request parameter is
+`output_config: {"format": {"type": "json_schema", "schema": ...}}`. Vision's
+base64 image content block is `{"type": "image", "source": {"type": "base64",
+"media_type": ..., "data": ...}}`, supporting image/jpeg, image/png,
+image/gif, and image/webp).
 Only exercised by `live`-marked tests -- re-check those URLs if this stops working.
 """
 
@@ -59,6 +63,22 @@ class AnthropicProvider(LLMProvider):
                     {"type": "tool_use", "id": tc.id, "name": tc.name, "input": tc.arguments}
                     for tc in m.tool_calls
                 ]
+            elif m.images:
+                # Images before text performs best (Module 15, verified against
+                # https://platform.claude.com/docs/en/build-with-claude/vision).
+                content = [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": img.media_type,
+                            "data": img.data_base64,
+                        },
+                    }
+                    for img in m.images
+                ]
+                if m.content:
+                    content.append({"type": "text", "text": m.content})
             else:
                 content = m.content or ""
             wire.append({"role": m.role.value, "content": content})
