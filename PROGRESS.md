@@ -36,7 +36,12 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   `starter/`), quiz, pitfalls, resources (verified 2026-09-22). Also added
   `shared/testing/lab_loader.py` (+ its own 4 tests) as the reusable
   starter-vs-solution test-loading pattern every future lab will use.
-- ⬜ 01 How LLMs work
+- ✅ 01 How LLMs work -- 5 lessons (tokens/tokenizers, context windows,
+  sampling/decoding, embeddings, reasoning models & hallucination), 3 runnable
+  examples (verified), 1 lab (token counting with real `tiktoken` + a
+  temperature/softmax sampling simulator: starter/solution/tests, 10 tests
+  passing against `solution/`). Links checked (`scripts/check_links.py`: all
+  17 unique links OK).
 - ⬜ 02 Talking to LLMs
 
 ## Level 1 -- First agent, no frameworks
@@ -136,13 +141,17 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 0, Module 01 (How LLMs work)**: lessons on tokens/tokenizers,
-context windows, sampling (temperature/top-p), embeddings, reasoning models,
-hallucination and other limitations, under `curriculum/01-how-llms-work/`,
-following the same per-module structure Module 00 used (`README.md`, `lessons/`,
-`examples/`, `labs/`, `quiz.md`, `pitfalls.md`, `resources.md`). Lab (per the
-approved plan): a token-counting + sampling-parameter visualizer using a real
-tokenizer library (`tiktoken` is already a dependency) -- no API key needed.
-Verify current claims about reasoning-model behavior and tokenizer specifics
-against official docs before writing the lessons (Ground Rule 1). Run the
-solution's tests before marking done, then update this file and commit.
+Build **Level 0, Module 02 (Talking to LLMs)**: lessons on the messages/roles API
+shape, streaming, structured outputs (JSON schema), prompt engineering
+fundamentals, and cost & latency, under `curriculum/02-talking-to-llms/`,
+following the same per-module structure Modules 00-01 used. Lab (per the
+approved plan): build the first version of `shared/llm/client.py`-style code
+yourself (guided) against `shared/llm/mock.py`'s `MockLLMProvider`, then swap in
+one real provider as a live-gated exercise. This module can and should reuse
+`shared/llm/` directly (it already exists from Phase 0) rather than
+reimplementing it -- the lesson is about understanding what that code does, and
+the lab should have the learner build a *small* client/agent-facing wrapper on
+top of `shared.llm.get_client()`, not redo the provider adapters. Verify current
+structured-output API shapes (JSON schema param names) per provider before
+writing lesson 3 (Ground Rule 1). Run the solution's tests before marking done,
+then update this file and commit.
