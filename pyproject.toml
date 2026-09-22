@@ -51,6 +51,9 @@ markers = [
 ]
 addopts = "-m 'not live'"
 testpaths = ["shared", "curriculum", "projects", "capstones"]
+# sample_repo/ (Module 13's coding-agent lab) contains a deliberately failing
+# test fixture for the lab's agent to fix at runtime -- never our own suite.
+norecursedirs = ["sample_repo"]
 
 [tool.ruff]
 line-length = 100

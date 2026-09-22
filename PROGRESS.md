@@ -208,7 +208,28 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 4 -- Specialized agents
 
-- ⬜ 13 Coding agents
+- ✅ 13 Coding agents -- 4 lessons (sandboxed code execution, using
+  `shared/sandbox/` for real for the first time since Phase 0; repo
+  navigation/editing with path-traversal-safe file tools; the test-driven
+  agent loop, Module 04's ReAct loop plus a mechanical pytest-based stop
+  signal instead of a model judgment call; how terminal coding agents work,
+  verified 2026-09-22 against Claude Code's current best-practices docs --
+  explore/plan/code/commit, "give it a way to verify," context-window
+  management as the primary constraint). 1 runnable example
+  (`sandboxed_tools_demo.py`, verified). 1 lab: an agent that fixes a real
+  bug in a small bundled sample repo (`sample_repo/`, a read-only template
+  copied into a temp dir outside the git tree per test run, both to avoid
+  polluting tracked files and because a nested-in-repo `pytest` subprocess
+  would otherwise pick up this project's own `pyproject.toml` config) using
+  `read_file`/`write_file`/`run_tests` tools, entirely inside
+  `shared/sandbox/shell_sandbox.py`. The agent's final status is an
+  independent re-run of the tests, never the model's own claim -- proven by
+  a test where the model falsely claims success and the loop still reports
+  `"failed"`. 10 tests passing; starter's gaps correctly raise
+  `NotImplementedError`. Added `norecursedirs = ["sample_repo"]` to
+  `pyproject.toml`'s pytest config so the repo's own `make test` never
+  collects the sample repo's deliberately-failing fixture test. 204 passed,
+  9 skipped repo-wide; links checked (70 unique, all OK).
 - ⬜ 14 Browser & computer-use agents
 - ⬜ 15 Voice & multimodal agents
 - ⬜ Project: data-analysis agent with a code sandbox
@@ -280,26 +301,31 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Level 3 and both interleaved projects are complete. Start **Level 4, Module
-13 (Coding agents)** under `curriculum/13-coding-agents/`, following the same
-per-module structure used so far (README, lessons/, examples/, labs/NN-name/
-{README,starter,solution,tests}, quiz.md, pitfalls.md, resources.md). Cover:
-sandboxed code execution (reuse `shared/sandbox/code_sandbox.py`, already
-built and tested -- don't rebuild it, wire an agent up to it), repo
-navigation (reading/searching/editing files in a small sample repo), a
-test-driven agent loop (agent edits code, runs the test suite, iterates until
-it passes or hits a step budget -- this is Module 04's ReAct loop plus
-Module 09's step-budget discipline, applied to code), and a short lesson on
-how real terminal coding agents work at a conceptual level (verify current
-claims about e.g. Claude Code/Codex CLI architecture before writing this --
-don't rely on stale training-data assumptions, per Ground Rule 1). The lab:
-an agent that fixes one or more failing tests in a small bundled sample repo
-(a handful of files, a deliberately introduced bug, a pytest suite), running
-entirely inside `shared/sandbox/` so the agent can never touch the real
-filesystem/shell outside the sandbox. No API key needed for the default
-tests -- script the mock provider's tool-call sequence the same way Module
-04's ReAct lab did. After Module 13, continue to Module 14 (Browser &
-computer-use agents), Module 15 (Voice & multimodal agents), then the
-"data-analysis agent with a code sandbox" project closes out Level 4. Run
-each solution's tests before marking done, then update this file and commit
+Build **Level 4, Module 14 (Browser & computer-use agents)** under
+`curriculum/14-browser-and-computer-use-agents/`, following the same
+per-module structure used so far. Before writing lessons, verify current
+claims (Ground Rule 1) about browser/computer-use approaches -- the approved
+plan's landscape notes (from 2026-09-22) say the converged 2026 pattern is
+accessibility-tree + screenshot with a small typed action vocabulary and a
+step-budgeted loop (Claude's computer-use tool GA'd 2026-08-19; OpenAI
+folded Operator into ChatGPT "agent mode" plus Codex Background Computer Use;
+Gemini Computer Use blends DOM/accessibility tree with screenshots) --
+re-check this is still accurate before treating it as ground truth, since
+it's the kind of claim that goes stale fastest. Cover: browser automation
+basics, screenshot-vs-DOM/accessibility-tree tradeoffs, and reliability
+tricks (retry-on-ambiguous-element, explicit wait conditions instead of
+fixed sleeps). Lab: a headless-browser task agent (Playwright is the
+verified current standard -- confirm before adding it as a dependency, since
+it's a new external dependency this repo hasn't needed yet) navigating a
+small bundled local HTML test page (not the live internet, so the lab stays
+offline-testable and stable), reusing Module 13's sandboxing/tool-scoping
+discipline (Module 13's `resolve_within_repo`-style scoping generalizes to
+"the agent can only navigate pages you've explicitly allowed"). After Module
+14, build Module 15 (Voice & multimodal agents -- a vision-input lab
+answering questions about a bundled image is required; a live realtime-audio
+architecture walkthrough is written but not required to pass offline, per
+the approved plan), then the "data-analysis agent with a code sandbox"
+project (reusing `shared/sandbox/code_sandbox.py` again, plus Module 06's
+RAG/Module 13's coding-agent patterns) closes out Level 4. Run each
+solution's tests before marking done, then update this file and commit
 after each module/project.
