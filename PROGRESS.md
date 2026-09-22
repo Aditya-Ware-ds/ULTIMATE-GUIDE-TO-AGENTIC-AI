@@ -281,7 +281,20 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   this environment; run it manually per the lab README before trusting the
   live path. 215 passed, 9 skipped, 3 deselected repo-wide; links checked
   (78 unique, all OK). **Level 4 is now fully complete.**
-- ⬜ Project: data-analysis agent with a code sandbox
+- ✅ Project: data-analysis agent with a code sandbox -- a `run_analysis`
+  tool executing model-written Python for real via
+  `shared.sandbox.code_sandbox.run_python` (never `exec()`, per Module 13's
+  discipline reused directly) against a bundled `dataset/sales.csv` (copied
+  into a temp dir per test, same reasoning as Module 13's `repo_copy`).
+  Errors from the sandboxed code (verified with a real `NameError`) are
+  surfaced as a string, not raised, so the Module 04 ReAct loop can
+  self-correct on the next step -- proven by a test where the model's first
+  tool call has a real bug and the second one fixes it. 5 tests passing
+  (real sandboxed execution with a correct-code assertion on real computed
+  output, real error surfacing, dispatch, self-correction, max_steps);
+  starter's gaps correctly raise `NotImplementedError`. **Level 4 and its
+  interleaved projects are now fully complete.** 220 passed, 9 skipped, 3
+  deselected repo-wide; links checked (78 unique, all OK).
 
 ## Level 5 -- Production engineering
 
@@ -367,34 +380,27 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Level 4 is complete. Build the **"data-analysis agent with a code sandbox"**
-project next, under `projects/05-data-analysis-agent/` (confirm exact
-naming against the `projects/0N-name/` convention already established).
-Reuse `shared/sandbox/code_sandbox.py` directly (already built and tested in
-Phase 0, exercised for real in Module 13): an agent that writes and runs
-Python to analyze a small bundled dataset (e.g. a CSV with a handful of
-columns/rows, bundled in the project directory, not fetched live) inside the
-sandbox, following Module 13's exact discipline -- never `exec()` generated
-code directly, only through `run_python`, with the same reasoning
-(untrusted, model-generated code needs process isolation, a timeout, and a
-restricted environment). The agent's loop should be Module 04's ReAct shape
-again, with a `run_python_analysis(code: str) -> str` tool (or similarly
-named) that returns the sandboxed stdout, and the task should be answerable
-by writing a short pandas/csv-module script and reading its printed output
--- keep the dataset and task small enough that the whole thing stays
-offline-testable via the mock provider's scripted tool-call sequence, the
-same pattern used in every ReAct-loop lab so far. After this project, start
-**Level 5, Module 16 (Evaluation)** under `curriculum/16-evaluation/`: eval-
-driven development, golden datasets, LLM-as-judge (and its known biases),
-trajectory/tool-call evals, regression suites, and current public benchmarks
-(SWE-bench, GAIA, tau-bench, BrowseComp, WebArena, OSWorld, Terminal-Bench --
-re-verify each is still current and accurately described before citing it,
-per Ground Rule 1, the same discipline that caught the stale computer-use
-claim in Module 14). Lab: a small golden-dataset eval harness plus an
-LLM-as-judge for one earlier agent (e.g. Module 04's ReAct agent or Module
-13's coding agent), runnable offline against the mock provider. Two
-follow-ups noted in Open Issues above are worth revisiting when this
-environment has reliable network access: Module 14's live Playwright test
-and Module 15's live Anthropic vision test were both written but not
-executed this session. Run each solution's tests before marking done, then
-update this file and commit after each project/module.
+Level 4 and its interleaved projects are complete. Start **Level 5, Module
+16 (Evaluation)** under `curriculum/16-evaluation/`, following the same
+per-module structure used so far. Cover: eval-driven development, golden
+datasets, LLM-as-judge (and its known biases -- position/verbosity/self-
+preference bias), trajectory/tool-call evals (checking *how* an agent
+reached an answer, not just the final output -- Module 07's checkpoint
+state and Module 13's tool-call dispatch give you real trajectories to
+evaluate), regression suites, and current public benchmarks (SWE-bench,
+GAIA, tau-bench, BrowseComp, WebArena, OSWorld, Terminal-Bench -- re-verify
+each is still current and accurately described before citing it, per Ground
+Rule 1, the same discipline that caught the stale computer-use claim in
+Module 14). Lab: a small golden-dataset eval harness plus an LLM-as-judge
+for one earlier agent (Module 04's ReAct agent or Module 13's coding agent
+are good candidates -- both already have clear, checkable success criteria),
+runnable offline against the mock provider (script both the agent's
+responses and the judge's verdicts). After Module 16, continue to Module 17
+(Observability & debugging -- reuse `shared/tracing/tracer.py`, built in
+Phase 0 but not yet exercised by any lab, for real), Module 18 (Security &
+safety), and Module 19 (Deployment & scale) to close Level 5. Two follow-ups
+noted in Open Issues above are worth revisiting when this environment has
+reliable network access: Module 14's live Playwright test and Module 15's
+live Anthropic vision test were both written but not executed this session.
+Run each solution's tests before marking done, then update this file and
+commit after each module.
