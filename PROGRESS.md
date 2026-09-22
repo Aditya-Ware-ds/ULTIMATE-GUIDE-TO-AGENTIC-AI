@@ -120,7 +120,15 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   passing against `solution/`, all failing correctly against `starter/`).
   **Level 2 (Modules 07-09) is now fully complete** except the interleaved
   project below.
-- ⬜ Project: customer-support agent with escalation
+- ✅ Project: customer-support agent with escalation -- integration project
+  reusing Module 09's approval-gate/checkpoint pattern (gated `issue_refund`
+  tool) and escalation pattern (hitting `max_steps` now returns
+  `status="escalated"` with a full step-by-step summary instead of a generic
+  stop message). FAQ lookup uses a simple in-memory keyword-overlap match
+  rather than Module 06's full hybrid-search machinery, by design (this
+  project's point is approval+escalation integration, not retrieval).
+  starter/solution/tests split, 8 tests passing against `solution/`, all
+  failing correctly against `starter/`.
 
 ## Level 3 -- The ecosystem
 
@@ -204,20 +212,23 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build the **"customer-support agent with escalation" project** under
-`projects/02-customer-support-agent/` (interleaved after Level 2, before Level
-3 begins), following the same starter/solution/tests structure as the
-research-assistant project (`projects/01-research-assistant/`). It should
-integrate, not re-derive: a small support knowledge base (Module 06-style
-retrieval, or simpler -- a handful of FAQ documents is enough, doesn't need
-the full hybrid-search machinery if a simpler lookup suffices for the
-project's actual scope), an approval gate on a genuinely consequential tool
-(e.g. `issue_refund`, reusing Module 09's `_continue_loop`/checkpoint pattern
-directly), and escalation (Module 09 lesson 3's `should_escalate`/
-`build_escalation_summary` pattern) triggered on hitting `max_steps` or an
-out-of-scope request. Keep it offline-testable against
-`shared.llm.get_client("mock")` like every prior lab/project. After this
-project, Level 2 is complete -- move to **Level 3, Module 10 (Protocols)**:
-MCP (build a server AND client against the current 2026-07-28 spec -- verify
-it's still current before writing, per Ground Rule 1), A2A, and Agent Skills.
-Run all tests before marking done, then update this file and commit.
+Build **Level 3, Module 10 (Protocols)**: MCP (build a server AND client),
+A2A, and Agent Skills, under `curriculum/10-protocols/`, following the same
+per-module structure used so far. Per PLAN.md this was verified against the
+**2026-07-28 MCP spec** (stateless protocol core, multi-round-trip requests,
+header-based routing) -- re-verify it's still current before writing (Ground
+Rule 1; specs move fast and this plan is now weeks old). Labs (per the
+approved plan): `mcp-server`, `mcp-client`, `a2a-handoff`,
+`agent-skill-package` -- four smaller labs rather than one big one, since
+these are four fairly distinct protocols/standards. The MCP server should
+wrap Module 03's calculator/weather tools (reuse, don't reimplement); the MCP
+client should be a real client talking to that real server (likely needs
+`mcp` as a new dependency -- check current PyPI package name/API before
+adding it to `pyproject.toml`). A2A and Agent Skills labs can be smaller/more
+conceptual given their scope (a minimal two-agent task handoff; packaging one
+existing tool as a `SKILL.md`) -- use judgment on depth per Ground Rule "verify
+everything that changes fast" without over-building. This is a good candidate
+for checking whether local MCP client/server tests can run fully offline
+(stdio transport between a local client and local server process should not
+need network access) -- confirm this before assuming Ground Rule 4 holds here.
+Run the solution's tests before marking done, then update this file and commit.
