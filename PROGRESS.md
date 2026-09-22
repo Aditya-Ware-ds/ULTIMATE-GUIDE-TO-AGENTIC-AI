@@ -97,7 +97,13 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 2 -- Capable agents
 
-- ⬜ 07 Memory & state
+- ✅ 07 Memory & state -- 3 lessons (memory types, memory stores, checkpointing
+  & resumption), 3 runnable examples (verified), 1 lab (resumable agent:
+  checkpoint messages+step to JSON, resume without repeating completed model
+  calls -- the "kill and resume" test simulates a crash by calling
+  `run_one_step` directly rather than letting a single call run to completion:
+  starter/solution/tests, 11 tests passing against `solution/`, all failing
+  correctly against `starter/`).
 - ⬜ 08 Planning & reasoning patterns
 - ⬜ 09 Human-in-the-loop
 - ⬜ Project: customer-support agent with escalation
@@ -184,19 +190,22 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 2, Module 07 (Memory & state)**: lessons on short-term vs.
-long-term memory, episodic vs. semantic memory, memory stores, and
-checkpointing/resumption, under `curriculum/07-memory-and-state/`, following
-the same per-module structure used so far. Per the approved plan, the lab
-should add checkpointed, resumable state to the running agent pattern (a
-"kill-and-resume" test: serialize agent state mid-run, reload it in a fresh
-process/object, and prove it continues correctly) -- this is meaningfully new
-territory versus Modules 03-06 (which never needed to persist state across
-process boundaries), so budget real design time for the serialization format
-(plain JSON of the `Message` list plus any loop-specific state, e.g. step
-count, is likely sufficient and keeps this offline-testable with no new
-dependencies). Distinguish this clearly from Module 05's compaction (shrinking
-context *within* a run) and Module 06's retrieval (finding *documents*) --
-memory here means deliberately persisting an agent's *own state* across
-separate runs. Run the solution's tests before marking done, then update this
-file and commit.
+Build **Level 2, Module 08 (Planning & reasoning patterns)**: lessons on
+plan-and-execute, reflection/self-critique, routing, parallelization,
+orchestrator-workers, evaluator-optimizer, and "when a workflow beats an
+agent," under `curriculum/08-planning-and-reasoning/`, following the same
+per-module structure used so far. This module has more distinct patterns than
+prior modules -- consider whether to give each pattern its own lesson (likely
+4-5 lessons instead of the usual 3) or group related ones (e.g.
+plan-and-execute + evaluator-optimizer together, routing + parallelization +
+orchestrator-workers together) -- use judgment based on how much each pattern
+needs to stand alone. Lab (per the approved plan): implement plan-and-execute
+AND evaluator-optimizer for the *same* task and compare them directly (e.g.
+run both against a handful of test cases and show where each wins/loses) --
+this is a good opportunity to use `asyncio.gather` (Module 00, lesson 04) for
+the parallelization pattern's own demonstration. The "workflow vs. agent"
+material should explicitly reference Module 04 lesson 1's "don't build an
+agent loop for a fixed sequence of steps" point and Anthropic's "Building
+effective agents" essay (already cited in Module 04's resources.md) rather
+than re-deriving the distinction from scratch. Run the solution's tests before
+marking done, then update this file and commit.
