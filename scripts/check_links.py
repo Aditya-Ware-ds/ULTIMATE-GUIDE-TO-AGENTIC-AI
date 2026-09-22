@@ -45,7 +45,10 @@ def main() -> int:
             url_to_files.setdefault(url, []).append(path)
 
     failures: list[tuple[str, str]] = []
-    with httpx.Client(follow_redirects=True, timeout=10.0) as client:
+    # A generic requests-style default User-Agent gets bot-blocked (403) by some
+    # sites (Wikipedia among them) that otherwise serve normal browsers fine.
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; agentic-ai-mastery-link-check/1.0)"}
+    with httpx.Client(follow_redirects=True, timeout=10.0, headers=headers) as client:
         for url in sorted(url_to_files):
             try:
                 response = client.head(url)

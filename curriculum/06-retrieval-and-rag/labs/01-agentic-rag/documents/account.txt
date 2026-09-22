@@ -1,0 +1,7 @@
+Account and Password Help
+
+To reset your password, click "Forgot password" on the login page and enter
+the email associated with your account. A reset link will be sent within a
+few minutes and expires after 1 hour. If you no longer have access to that
+email, contact support to verify your identity and update your account email.
+Accounts are automatically locked after 5 failed login attempts for security.

@@ -75,7 +75,17 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   token count under budget across an 18+ step scripted run: starter/solution/
   tests, 8 tests passing against `solution/`, all 8 correctly failing against
   `starter/`). Links checked (33 unique, all OK).
-- ⬜ 06 Retrieval & agentic RAG
+- ✅ 06 Retrieval & agentic RAG -- 3 lessons (chunking & embeddings, hybrid
+  search & reranking, agentic RAG), 3 runnable examples (verified; hybrid search
+  demo uses a deterministic `hashlib`-based toy embedding, clearly labeled as
+  not a real model), 1 lab (agentic RAG over 4 bundled support-doc `.txt` files
+  with a `search_documents` tool the model can call multiple times:
+  starter/solution/tests, 16 tests passing against `solution/`, all failing
+  correctly against `starter/`). Fixed a link-checker false-positive along the
+  way: `scripts/check_links.py` now sends a normal User-Agent header (some
+  sites, Wikipedia included, 403 the default httpx UA). Links checked (37
+  unique, all OK). **Levels 0-1 (Modules 00-06) are now fully complete** except
+  the interleaved project below.
 - ⬜ Project: research assistant with citations
 
 ## Level 2 -- Capable agents
@@ -167,20 +177,21 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 1, Module 06 (Retrieval & agentic RAG)** -- the last module of
-Level 1. Lessons on chunking, embeddings, vector stores, hybrid search,
-reranking, and agent-driven retrieval, under `curriculum/06-retrieval-and-rag/`,
-following the same per-module structure used so far. Per the approved plan,
-use a simple local/embedded vector store (no paid vector DB) and an
-offline-testable fake embedding function (real embedding models need an API
-key; Module 01's `embeddings_demo.py` toy hashing-based embedding is a
-reasonable pattern to reuse or reference for offline testability, but this
-module should also show what a *real* embedding call looks like via
-`shared.llm`-adjacent code, clearly marked live-only). Lab (per the approved
-plan): agentic RAG over a small bundled document set (a handful of short text
-files committed to the lab's `starter/`/`solution/` directories), offline-
-testable with the fake embedding function. This closes out Level 1 -- after
-this module, also build the **Level 1 project** ("research assistant with
-citations," per ROADMAP.md / PLAN.md) under `projects/` before moving to Level 2
-Module 07. Run the solution's tests before marking done, then update this file
-and commit.
+Build the **"research assistant with citations" project** under `projects/`
+(per the approved plan, this is interleaved after Level 1/RAG, before Level 2
+begins). It should be a portfolio-sized integration exercise reusing
+`shared.llm` plus the patterns from Modules 03-06 (tool calling, agent loop,
+context compaction, agentic RAG) rather than introducing new concepts --
+a small standalone project with its own README (spec + acceptance criteria),
+source, and tests, following the same starter/solution/tests split as a lab
+where practical, or a single complete solution with tests if a starter/gap
+split doesn't fit a project-sized build (use judgment; document the choice in
+the project's own README). It should demonstrate: retrieval over a small
+document set (reuse/extend Module 06's `rag.py` patterns), an agent loop that
+decides when to search, and **citations** in the final answer (which source
+document/chunk each claim came from) -- citation-tracking is new territory
+this project should introduce carefully (verify current best-practice framing
+for citation faithfulness before writing, since a model can still fabricate a
+citation even when asked for one -- Module 01 lesson 05's hallucination point
+applies directly). After this project, move to **Level 2, Module 07 (Memory &
+state)**. Run all tests before marking done, then update this file and commit.
