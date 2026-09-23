@@ -41,15 +41,16 @@ every `@pytest.mark.live` test is written and should pass, but that's
 unverified against a real provider; `Message.images` (Module 15) is wired
 into `AnthropicProvider` only; `mkdocs build --strict` still fails on a
 known, non-fatal cross-link resolution issue; `docs/`'s nav doesn't yet
-list individual curriculum modules (searchable, but not in the top nav);
-`cheatsheets/` and `papers/` still contain only their Phase-0 stub READMEs
-and were not populated during this pass (the approved plan calls for
-populating them "alongside the modules they summarize," which this
-session prioritized differently -- finishing the full module/project/
-capstone set first). A learner using this repo today can complete the
-entire curriculum and both cross-cutting `system-design/` case studies
-with zero gaps; the two thin stub directories and the unexecuted live
-tests are the honest remaining TODOs.
+list individual curriculum modules (searchable, but not in the top nav).
+`cheatsheets/` (4 pages: agent design patterns, framework comparison,
+evaluation metrics, security checklist) and `papers/` (8 real, verified
+papers already cited across this build -- ReAct, Lost in the Middle,
+Reflexion, Multiagent Debate, AutoGen, G-Eval, the LLM-as-judge bias paper,
+DeepSeekMath/GRPO) are now populated. A learner using this repo today can
+complete the entire curriculum, both `system-design/` case studies, and
+both cross-cutting reference sections with zero gaps; the unexecuted live
+tests are the one honest remaining TODO, and require real provider keys
+this environment doesn't have.
 
 ## Phase 0 -- Scaffold
 
@@ -710,36 +711,25 @@ tests are the honest remaining TODOs.
 
 ## Exact next step
 
-**The full curriculum (25 modules, 5 projects, 3 capstones) and the final
-pass are both complete** (full offline suite green, link check green,
-`mkdocs build` succeeds non-strict, glossary updated, prerequisite
-ordering verified -- see "Build summary" at the top of this file and the
-checked-off items above). What remains, per the approved plan's
-cross-cutting-materials guidance, is populating **`cheatsheets/`** and
-**`papers/`**, both still just their Phase-0 stub READMEs:
+**Every piece of the approved plan is complete**: 25 curriculum modules,
+5 projects, 3 capstones, the final pass (offline suite, link check,
+`mkdocs build`, glossary, prerequisite ordering), and both cross-cutting
+reference sections (`cheatsheets/`, `papers/`). Last full verification:
+`uv run pytest -q` → 285 passed, 10 skipped, 3 deselected, 0 failed;
+`uv run python scripts/check_links.py` → 98 unique links across 497
+files, all OK.
 
-- **`cheatsheets/`** -- one-page quick references, per the stub's own
-  stated plan: agent design patterns (Module 08's plan-and-execute/
-  reflection/routing/parallelization/orchestrator-workers/evaluator-
-  optimizer, one line each with when to use it), a framework comparison
-  matrix (Module 11 already wrote a full comparison lesson --
-  `curriculum/11-frameworks/lessons/02-comparison-matrix-and-how-to-choose.md`
-  -- condense that into cheatsheet form, don't re-derive it), evaluation
-  metrics (Module 16), and a security checklist (Module 18's OWASP table
-  plus its tool-permission/red-team checklist, condensed).
-- **`papers/`** -- an annotated reading list. Pull from papers already
-  verified real and cited across this build rather than researching new
-  ones from scratch: Reflexion (Module 08), G-Eval and the LLM-as-judge
-  bias paper (Module 16), DeepSeekMath/GRPO (Modules 21 and 23), plus
-  anything cited in Module 23's own resources.md. Each entry needs what
-  the paper actually showed, why it matters for building agents, and its
-  verified link -- reuse the verification already done in-session, don't
-  re-verify from scratch, but do double check each link still resolves via
-  `scripts/check_links.py` before committing.
+**There is no more planned build work.** The only remaining, explicitly
+scoped-out item is executing the `@pytest.mark.live` tests against real
+provider API keys (Open Issues below has the current known list) -- do
+that whenever this environment has real keys and reliable network access
+for `playwright install`, but it isn't blocking anything else.
 
-Both are pure-markdown content additions (no code, no new tests beyond the
-existing link checker). After these, do one final full verification pass
-(`uv run pytest -q`, `uv run python scripts/check_links.py`) and commit.
-At that point every piece of the approved plan is complete with no known
-remaining gaps except the unexecuted live-API tests (Open Issues below),
-which require real provider keys this environment doesn't have.
+If resuming this project in a future session with no specific new
+instruction, good next moves in priority order: (1) run the live tests if
+keys are now available, (2) re-run the full verification suite fresh
+(files may have drifted since this note), (3) consider whether any
+provider adapter should gain `Message.images` support beyond
+`AnthropicProvider` (Module 15's documented scope limit), (4) treat
+anything else as genuinely new scope requiring a fresh decision from the
+user, not something implied by the original plan.
