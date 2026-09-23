@@ -437,7 +437,25 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   formula and a zero-std edge case; starter's gaps correctly raise
   `NotImplementedError`. 249 passed, 10 skipped, 3 deselected repo-wide;
   links checked (95 unique, all OK).
-- ⬜ 22 Long-horizon & autonomous agents
+- ✅ 22 Long-horizon & autonomous agents -- 3 lessons: context and
+  verification at scale (which earlier modules' patterns scale unmodified
+  to a long horizon -- Module 13's sandboxing, Module 18's tool
+  permissions -- and which need rethinking -- Module 04's single-loop
+  `max_steps`, Module 07's single-conversation checkpoint); reliability
+  math (naive chain success = `p**n`; a worked, arithmetic-checked example:
+  95% per-step reliability degrades to ~7.7% over 50 dependent steps);
+  progress files and resumability (extends Module 07's checkpoint to a
+  multi-task shape, **explicitly and directly identified as the same
+  pattern this repository's own `PROGRESS.md` has used across this entire
+  multi-session build** -- not a hypothetical analogy). 1 runnable example
+  (`reliability_math_demo.py`, verified, arithmetic double-checked by
+  hand). 1 lab: a multi-task progress-file agent proven via a real
+  kill-and-resume test (call the single-task function directly to simulate
+  a crash, then call the full resumable function again and verify the
+  completed task is never re-run) -- the identical test-pattern discipline
+  from Module 07's lab, now at task-list granularity. 5 tests passing;
+  starter's gaps correctly raise `NotImplementedError`. 254 passed, 10
+  skipped, 3 deselected repo-wide; links checked (95 unique, all OK).
 - ⬜ 23 Research literacy
 - ⬜ 24 Becoming a pro
 
@@ -510,36 +528,37 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 6, Module 22 (Long-horizon & autonomous agents)** under
-`curriculum/22-long-horizon-and-autonomous-agents/`, following the same
-per-module structure used so far. Cover: what changes about agent design
-over multi-hour (not multi-step) tasks -- context budgets compound
-differently over hours than over a bounded number of loop iterations
-(Module 05's context-engineering material, now at a much longer time
-horizon), self-verification becomes load-bearing rather than optional
-(Module 13's test-driven loop and Module 16's eval harness are the direct
-tools here, applied continuously rather than once at the end), and
-"progress files" as a concrete pattern for surviving interruption over a
-long horizon (this is a deliberate, nice full-circle moment: this very
-repo's own `PROGRESS.md` workflow, used across this entire multi-session
-build, IS the pattern being taught -- point back at it explicitly and
-directly rather than inventing a separate hypothetical example). Also
-cover agent reliability math: if a single step has success probability p,
-naive multi-step reliability degrades as p^n over n dependent steps, which
-is precisely why self-verification and checkpointing (Module 07) matter
-more, not less, as task horizon grows. Lab: extend an earlier agent (Module
-04's ReAct agent or Module 13's coding agent are good candidates) with a
-`PROGRESS.md`-style self-tracking file the agent reads/writes itself across
-simulated interruptions, proving a killed-and-restarted run resumes
-correctly without repeating completed work -- directly reuse Module 07's
-kill-and-resume test pattern (call the single-step function directly to
-simulate a crash, don't let a full run complete in one call). After Module
-22, build Module 23 (Research literacy -- a structured reading +
-reproduction-attempt exercise using one verified current paper, no code
-lab) and Module 24 (Becoming a pro -- portfolio/interview-prep content, no
-code lab, links into `system-design/`) to close Level 6. Two follow-ups
-noted in Open Issues above are worth revisiting when this environment has
-reliable network access: Module 14's live Playwright test and Module 15's
-live Anthropic vision test were both written but not executed this
-session. Run each solution's tests before marking done, then update this
-file and commit after each module.
+Build **Level 6, Module 23 (Research literacy)** under
+`curriculum/23-research-literacy/`, following the same per-module structure
+used so far, but note the approved plan explicitly says this module has
+**no code lab** -- it's a structured reading + reproduction-attempt
+exercise using one verified current paper, so `labs/` and `examples/` may
+be thin or absent; adapt the per-module quality bar accordingly rather than
+forcing a lab where the plan didn't call for one. Cover: how to read an
+agent-research paper critically (what's the actual claimed contribution vs.
+incremental framing, what's the eval methodology, what's missing/
+unaddressed), how to assess reproducibility (is code/data released, are
+hyperparameters/prompts specified precisely enough to actually rerun),
+and how to track the frontier without falling for hype (cross-check claims
+against multiple sources, watch for cherry-picked benchmarks -- ties
+directly back to Module 16 lesson 03's benchmark caution and this session's
+own repeated experience catching stale/incorrect claims in Modules 14 and
+18). For the "verified current paper" exercise, pick one real, genuinely
+current paper (verify it exists and read its actual abstract/claims via
+WebFetch before writing anything about it -- do not fabricate a paper or
+its findings) and walk through critically assessing it using this module's
+own framework, as the module's core worked example. After Module 23, build
+**Module 24 (Becoming a pro)** to close Level 6 -- also no code lab per the
+plan: portfolio strategy, open-source contribution guidance, agent
+system-design interview prep (linking into `system-design/`, which doesn't
+exist yet and may need its first real content here), and responsible-
+deployment/ethics material. After Level 6 closes, move to the **3
+capstones** (production coding agent, multi-agent research system, secure
+enterprise agent) -- these are large, multi-file efforts; consider spawning
+a fork or working through each capstone across multiple commits the way
+modules have been built, rather than attempting one in a single pass. Two
+follow-ups noted in Open Issues above are worth revisiting when this
+environment has reliable network access: Module 14's live Playwright test
+and Module 15's live Anthropic vision test were both written but not
+executed this session. Run each solution's tests before marking done, then
+update this file and commit after each module/capstone.
