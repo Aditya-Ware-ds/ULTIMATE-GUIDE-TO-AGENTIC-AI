@@ -85,7 +85,7 @@ and what's next.
 
 ## Contributing
 
-Issues and PRs welcome. If you add or change a claim about a framework, protocol,
+Issues and PRs welcome. If you add or change claim about framework, protocol,
 model, or benchmark, verify it against current official docs and date it -- this
 field moves monthly and stale claims are worse than no claims.
 
