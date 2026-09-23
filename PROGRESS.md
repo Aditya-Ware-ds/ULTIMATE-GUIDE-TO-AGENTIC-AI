@@ -456,7 +456,24 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   from Module 07's lab, now at task-list granularity. 5 tests passing;
   starter's gaps correctly raise `NotImplementedError`. 254 passed, 10
   skipped, 3 deselected repo-wide; links checked (95 unique, all OK).
-- ⬜ 23 Research literacy
+- ✅ 23 Research literacy -- **no code lab, per the approved plan** (a
+  reading/judgment skill, not something a test suite verifies). 3 lessons:
+  how to read an agent paper (separating claim from framing, auditing
+  baseline/eval-set/variance, taking limitations sections seriously); 
+  assessing reproducibility (exact prompts/dated model versions/sampling
+  params/eval harness -- what "code is released" doesn't automatically
+  cover); a worked example applying both lessons to the real GRPO/
+  DeepSeekMath paper (arXiv 2402.03300, confirmed real) already used in
+  Module 21 -- explicitly separates what was verified (title, framing, and
+  the exact formula, the latter cross-checked against an independent
+  source, Hugging Face TRL) from what was NOT independently verified
+  (DeepSeekMath's own reported benchmark numbers), modeling the "mark
+  UNVERIFIED" discipline concretely rather than just describing it. Ties
+  this module's whole framing explicitly back to two corrections this
+  session already made for real (Module 14's computer-use claim, Module
+  18's OWASP claim) as worked proof the discipline isn't hypothetical.
+  254 passed, 10 skipped, 3 deselected repo-wide (unchanged -- no code this
+  module); links checked (97 unique, all OK).
 - ⬜ 24 Becoming a pro
 
 ## Capstones
@@ -528,37 +545,36 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 6, Module 23 (Research literacy)** under
-`curriculum/23-research-literacy/`, following the same per-module structure
-used so far, but note the approved plan explicitly says this module has
-**no code lab** -- it's a structured reading + reproduction-attempt
-exercise using one verified current paper, so `labs/` and `examples/` may
-be thin or absent; adapt the per-module quality bar accordingly rather than
-forcing a lab where the plan didn't call for one. Cover: how to read an
-agent-research paper critically (what's the actual claimed contribution vs.
-incremental framing, what's the eval methodology, what's missing/
-unaddressed), how to assess reproducibility (is code/data released, are
-hyperparameters/prompts specified precisely enough to actually rerun),
-and how to track the frontier without falling for hype (cross-check claims
-against multiple sources, watch for cherry-picked benchmarks -- ties
-directly back to Module 16 lesson 03's benchmark caution and this session's
-own repeated experience catching stale/incorrect claims in Modules 14 and
-18). For the "verified current paper" exercise, pick one real, genuinely
-current paper (verify it exists and read its actual abstract/claims via
-WebFetch before writing anything about it -- do not fabricate a paper or
-its findings) and walk through critically assessing it using this module's
-own framework, as the module's core worked example. After Module 23, build
-**Module 24 (Becoming a pro)** to close Level 6 -- also no code lab per the
-plan: portfolio strategy, open-source contribution guidance, agent
-system-design interview prep (linking into `system-design/`, which doesn't
-exist yet and may need its first real content here), and responsible-
-deployment/ethics material. After Level 6 closes, move to the **3
-capstones** (production coding agent, multi-agent research system, secure
-enterprise agent) -- these are large, multi-file efforts; consider spawning
-a fork or working through each capstone across multiple commits the way
-modules have been built, rather than attempting one in a single pass. Two
-follow-ups noted in Open Issues above are worth revisiting when this
-environment has reliable network access: Module 14's live Playwright test
-and Module 15's live Anthropic vision test were both written but not
+Build **Level 6, Module 24 (Becoming a pro)** under
+`curriculum/24-becoming-a-pro/`, the last module of Level 6 -- **no code
+lab, per the approved plan** (same reasoning as Module 23: this is
+portfolio/career content, not something a test suite verifies). Cover:
+portfolio strategy (what to build/show, and how this very curriculum's
+projects/capstones double as portfolio pieces once complete), open-source
+contribution guidance (how to find and make a genuine first contribution
+to an agent framework/tool, referencing the real projects this curriculum
+already covered in Module 11 -- LangGraph, OpenAI Agents SDK, etc. -- as
+concrete places to start), agent system-design interview prep (this is
+where `system-design/` gets its first real content -- write 2-3 worked
+system-design case studies, e.g. "design a customer-support agent
+platform" or "design a multi-agent research system," drawing on Modules
+09/12/16/18/19/22's material directly), and responsible-deployment/ethics
+material (grounded in Module 18's security material, not generic). After
+Module 24, Level 6 is complete -- move to the **3 capstones** (production
+coding agent, multi-agent research system, secure enterprise agent). These
+are large, multi-file efforts, each combining most of the curriculum's
+techniques (sandboxing, evals, tracing, security, deployment); given their
+size, consider using a fork or working through each capstone across
+several commits the way modules have been built (spec → architecture doc →
+implementation → eval suite → threat model → deploy guide, per the
+approved plan), rather than attempting one in a single pass. After the
+capstones, do the **final pass**: full offline test suite, a `test-live`
+smoke run if API keys become available, a full link check, `mkdocs build`,
+a terminology-vs-`GLOSSARY.md` consistency check, a prerequisite-ordering
+check across all 25 modules, and a summary of what shipped and any known
+gaps (including the two still-unexecuted live tests noted in Open Issues
+below). Two follow-ups noted in Open Issues above are worth revisiting when
+this environment has reliable network access: Module 14's live Playwright
+test and Module 15's live Anthropic vision test were both written but not
 executed this session. Run each solution's tests before marking done, then
 update this file and commit after each module/capstone.
