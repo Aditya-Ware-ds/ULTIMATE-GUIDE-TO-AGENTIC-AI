@@ -389,7 +389,34 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Level 6 -- Expert / frontier
 
-- ⬜ 20 Optimizing agents
+- ✅ 20 Optimizing agents -- Level 6 begins. **Verified DSPy for real**
+  (installed `dspy` 3.3.1 via `uv run --with dspy`, read `dspy.BaseLM`'s
+  actual installed source with `inspect.getsource()`, and iteratively
+  smoke-tested a scripted offline LM end-to-end -- including discovering
+  and working around two real, undocumented-in-summary-form gotchas: the
+  legacy LM contract needs an object with `.choices[0].message.content`
+  attribute access, not a dict, and DSPy's default `ChatAdapter` silently
+  double-calls via a `JSONAdapter` fallback unless `JSONAdapter` is
+  configured explicitly). 3 lessons: DSPy signatures and modules
+  (`dspy.Predict`, a fully offline `dspy.BaseLM` subclass); optimizing with
+  a metric (a real, verified `dspy.BootstrapFewShot.compile()` run,
+  producing real inspectable `optimized.demos`); fine-tuning, distillation,
+  and local models (conceptual, ties to `shared/llm/`'s `OllamaProvider`
+  and Module 19's cost-optimization material, with an explicit
+  cheapest-first lever ordering: prompt optimization -> routing ->
+  distillation -> fine-tuning). 1 runnable example
+  (`scripted_lm_demo.py`, verified, requires `uv run --with dspy`). 1 lab:
+  a DSPy program optimized with `BootstrapFewShot` against a scripted,
+  deterministic offline LM -- 5 tests passing, including one that asserts
+  `len(optimized.demos) >= 1` as concrete proof optimization actually
+  happened, not just that `.compile()` ran without error; starter's gaps
+  correctly raise `NotImplementedError`. `dspy` is NOT a persistent
+  dependency (Module 11's `uv run --with` pattern, since it's a heavy,
+  fast-moving framework) -- `pytest.importorskip("dspy")` makes this lab's
+  tests show as **skipped** (not failed) in the default `make test`. 240
+  passed, 10 skipped, 3 deselected repo-wide; links checked (93 unique, all
+  OK -- one transient timeout on a pre-existing SETUP.md link resolved on
+  retry, unrelated to this module).
 - ⬜ 21 RL and training for agents
 - ⬜ 22 Long-horizon & autonomous agents
 - ⬜ 23 Research literacy
@@ -464,39 +491,42 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Level 5 is complete. Start **Level 6, Module 20 (Optimizing agents)** under
-`curriculum/20-optimizing-agents/`, following the same per-module structure
-used so far. Before writing, verify DSPy is still the reference
-prompt/weight-optimization framework (per the original plan's research from
-2026-09-22 -- re-check current version/API, since Module 11 already
-established that framework APIs in this space move fast and search results
-can describe stale versions; install it for real via `uv run --with dspy`
-and inspect with `dir()`/`inspect.signature()` before writing any code
-sample, the same technique used throughout Module 10/11). Cover: DSPy's
-core idea (declarative signatures + an optimizer that searches for better
-prompts/few-shot examples against a metric, rather than hand-tuning prompts
-manually -- ties directly back to Module 16's eval harness, since DSPy
-needs exactly that kind of metric function to optimize against), fine-tuning
-for tool use, distillation (training a smaller/cheaper model to imitate a
-larger one's outputs -- connects to Module 19's cost-optimization material
-and Module 02's cost tables), and open-weight/local models (Ollama is
-already `shared/llm/`'s fourth provider; this is where that choice gets its
-full context). Given DSPy is a heavy, potentially fast-moving dependency,
-default to Module 11's `uv run --with` pattern (not a persistent
-dependency) unless it turns out to be lightweight and conflict-free like
-FastAPI was. Lab: use DSPy to optimize a prompt for one earlier task against
-a small eval set -- Module 16's `evaluate_dataset`/golden dataset is the
-natural metric source; keep it offline-mockable (DSPy supports custom LMs,
-so wire in `shared/llm/get_client("mock")` or a thin adapter, the same
-"never require a live API key for the default test suite" discipline as
-every other module). After Module 20, continue to Module 21 (RL and
-training for agents -- RLVR/GRPO conceptual material, verify current
-framing before writing), Module 22 (Long-horizon & autonomous agents --
-note this module's own "extend an agent with a PROGRESS.md-style
-self-tracking file" lab is a deliberate, nice full-circle mirror of this
-very repo's own workflow), Module 23 (Research literacy), and Module 24
-(Becoming a pro) to close Level 6. Two follow-ups noted in Open Issues above
-are worth revisiting when this environment has reliable network access:
-Module 14's live Playwright test and Module 15's live Anthropic vision test
-were both written but not executed this session. Run each solution's tests
-before marking done, then update this file and commit after each module.
+Build **Level 6, Module 21 (RL and training for agents)** under
+`curriculum/21-rl-and-training-for-agents/`, following the same per-module
+structure used so far. Before writing, verify current framing of RLVR
+(Reinforcement Learning from Verifiable Rewards) and GRPO -- the original
+plan's research (2026-09-22) called RLVR the dominant current approach for
+math/code/tool-use agent training specifically because rewards are
+deterministically checkable rather than learned, explicitly complementary
+to RLHF rather than a replacement; re-verify this framing is still accurate
+before treating it as ground truth (this module is exactly the kind of
+frontier-adjacent material where a claim can go stale between the original
+research date and now). Cover: why verifiable rewards matter (ties directly
+to Module 13's "run the tests" principle and Module 16's mechanical-check-
+over-judge preference -- RLVR is that same idea applied to a training
+signal instead of an eval signal), environment design for RL (what makes a
+task's reward genuinely verifiable vs. only approximately so), reward
+hacking (a model finding a way to maximize reward without actually solving
+the intended task -- connect to Module 18's security framing: an
+unconstrained reward function is a kind of "excessive agency" surface too),
+and GRPO at a conceptual level (no need to implement real RL training
+infrastructure, which is out of scope for this offline-testable
+curriculum). Lab: a small, genuinely hands-on verifiable-reward loop --a
+toy math or code task with a deterministic checker (reuse Module 13's
+sandboxed code execution or Module 03's `ast`-based safe eval as the
+verifier), computing a reward signal for several candidate solutions and
+selecting the best, illustrating the RLVR *concept* concretely without
+requiring a real training run or GPU -- keep this conceptual/illustrative
+and explicitly labeled as such, not a real RL training implementation.
+After Module 21, continue to Module 22 (Long-horizon & autonomous agents --
+its own "extend an agent with a PROGRESS.md-style self-tracking file" lab
+is a deliberate, nice full-circle mirror of this very repo's own workflow),
+Module 23 (Research literacy -- a structured reading + reproduction-attempt
+exercise using one verified current paper, no code lab), and Module 24
+(Becoming a pro -- portfolio/interview-prep content, no code lab, links
+into `system-design/`) to close Level 6. Two follow-ups noted in Open
+Issues above are worth revisiting when this environment has reliable
+network access: Module 14's live Playwright test and Module 15's live
+Anthropic vision test were both written but not executed this session. Run
+each solution's tests before marking done, then update this file and
+commit after each module.
