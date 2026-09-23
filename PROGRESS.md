@@ -519,7 +519,25 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   repo-wide, not just within its own directory). 11 tests passing;
   starter's gaps correctly raise `NotImplementedError`. 265 passed, 10
   skipped, 3 deselected repo-wide; links checked (98 unique, all OK).
-- ⬜ 2. Multi-agent research system
+- ✅ 2. Multi-agent research system -- ships with README (spec),
+  ARCHITECTURE.md, THREAT_MODEL.md (4 named threats, each mapped to a
+  specific passing test, drawing on both Module 18's red-team framing and
+  Module 12 lesson 02's named multi-agent failure modes), and DEPLOY.md.
+  Extends `projects/04-multi-agent-content-pipeline/`'s researcher/writer/
+  critic topology **unmodified in its core control flow** with: real
+  nested tracing (Module 17 -- each worker wrapped in its own
+  `invoke_agent_span`, verified via actual parent/child `span_id` checks,
+  not just span-name presence, directly proving Module 17 lesson 02's
+  "multi-agent debugging needs the whole graph" point) and a numbered-fact
+  citation mechanism (`extract_citations`/`verify_citations`, a mechanical
+  check rather than an LLM-as-judge, deliberately) plus a generic
+  `eval_suite.py` (`evaluate_citation_accuracy`, Module 16's
+  `evaluate_dataset` shape) that excludes escalated topics from the mean
+  score. Named test files with the `test_capstone_*` prefix proactively
+  (per the lesson learned in Capstone 1) -- no collisions this time. 13
+  tests passing; starter's gaps correctly raise `NotImplementedError`. 278
+  passed, 10 skipped, 3 deselected repo-wide; links checked (98 unique,
+  all OK).
 - ⬜ 3. Secure enterprise agent
 
 ## Final pass (do last)
@@ -585,34 +603,26 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-**Level 6 (all 25 curriculum modules) is complete, and Capstone 1
-(Production coding agent) is done.** Build **Capstone 2 -- Multi-agent
-research system** next, under `capstones/02-multi-agent-research-system/`,
-following Capstone 1's exact artifact set (README spec, ARCHITECTURE.md,
-THREAT_MODEL.md, DEPLOY.md, `starter/`+`solution/`+`tests/`). Draw on
-Module 12 (multi-agent), Module 16 (evaluation), and Module 17
-(observability) per the plan. Concretely: extend
-`projects/04-multi-agent-content-pipeline/`'s researcher/writer/critic
-topology (don't redesign from scratch) with real tracing (Module 17's
-`invoke_agent_span`/`chat_span`/`execute_tool_span`, nested per-worker, to
-prove multi-agent debugging visibility per Module 17 lesson 02's point)
-and an eval suite (Module 16's `evaluate_dataset` shape, scoring citation
-accuracy the way `system-design/02-multi-agent-research-system.md`'s case
-study already sketches). Reuse that case study's architecture directly
-rather than redesigning. **Before naming any new test file, grep the repo
-for that exact basename first** (`find . -name "test_whatever.py"`) --
-Capstone 1 hit a real pytest collection error from two test files sharing
-a basename with unrelated files in `curriculum/13.../tests/` and
-`curriculum/16.../tests/` (pytest's default import mode requires globally
-unique test-file basenames repo-wide when no `__init__.py` files are
-present); prefixing capstone test files distinctly (e.g.
-`test_capstone_*.py`) avoids this proactively. After Capstone 2, build
-**Capstone 3 -- Secure enterprise agent**
-(`capstones/03-secure-enterprise-agent/`, drawing on Module 09, Module 10,
-Module 18 -- MCP tools, human approval gates, and a real red-team report
-following Module 18's exact four-step process, extending
+**Level 6 (all 25 curriculum modules) is complete. Capstones 1 (Production
+coding agent) and 2 (Multi-agent research system) are done.** Build
+**Capstone 3 -- Secure enterprise agent** next, under
+`capstones/03-secure-enterprise-agent/`, following the same artifact set
+as Capstones 1-2 (README spec, ARCHITECTURE.md, THREAT_MODEL.md,
+DEPLOY.md, `starter/`+`solution/`+`tests/`, test files prefixed
+`test_capstone_*` to avoid the basename-collision issue Capstone 1 hit).
+Draw on Module 09 (HITL), Module 10 (MCP), and Module 18 (security) per
+the plan. Concretely: an agent exposing real MCP tools (extend Module 10's
+`mcp.server.MCPServer` pattern, in-process `Client` testing) for a
+plausible enterprise scenario (e.g. querying internal records, drafting
+communications), a human-approval gate (Module 09's pattern) in front of
+every consequential tool, and a genuine red-team report following Module
+18's exact four-step process (pick a realistic scenario grounded in this
+specific agent's actual tools, prove an exploit with a failing test, patch
+it with a tool-level permission boundary, prove the same test now shows it
+blocked) -- extend
 `curriculum/18-security-and-safety/labs/01-indirect-injection-redteam/`'s
-pattern to a richer, MCP-tool-based agent). After all three capstones, do
+pattern to this richer, MCP-tool-based agent rather than redesigning the
+approach from scratch. After Capstone 3, do
 the **final pass**: full offline test suite, a `test-live` smoke run if API
 keys become available, a full link check, `mkdocs build`, a
 terminology-vs-`GLOSSARY.md` consistency check, a prerequisite-ordering
