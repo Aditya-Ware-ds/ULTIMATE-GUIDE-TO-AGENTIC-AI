@@ -417,7 +417,26 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   passed, 10 skipped, 3 deselected repo-wide; links checked (93 unique, all
   OK -- one transient timeout on a pre-existing SETUP.md link resolved on
   retry, unrelated to this module).
-- ⬜ 21 RL and training for agents
+- ✅ 21 RL and training for agents -- 3 lessons: verifiable rewards (RLVR,
+  reusing Module 13's exact sandboxing discipline for the reward function
+  itself; explicitly complementary to RLHF, not a replacement); reward
+  hacking (a model exploiting a reward function's letter without its
+  intent; explicitly tied back to Module 18's "the tool/boundary is the
+  actual constraint, not the model's intentions" framing); GRPO and
+  group-relative advantages (the exact formula `(r - mean) / std`, **verified
+  directly against Hugging Face TRL's current GRPO trainer docs** on
+  2026-09-22 -- confirmed GRPO eliminates PPO's separate critic model
+  entirely). 1 runnable example (`grpo_advantage_demo.py`, verified). 1
+  lab: a verifiable reward function (real sandboxed code execution via
+  `shared.sandbox.code_sandbox.run_python`) plus a real, exact
+  implementation of GRPO's advantage formula -- explicitly and repeatedly
+  labeled throughout (README, lessons, pitfalls) as illustrating the
+  reward/advantage **math** only, not a real policy-gradient training step,
+  to avoid any impression this curriculum implements actual RL training.
+  9 tests passing, including an exact-value check against the verified
+  formula and a zero-std edge case; starter's gaps correctly raise
+  `NotImplementedError`. 249 passed, 10 skipped, 3 deselected repo-wide;
+  links checked (95 unique, all OK).
 - ⬜ 22 Long-horizon & autonomous agents
 - ⬜ 23 Research literacy
 - ⬜ 24 Becoming a pro
@@ -491,42 +510,36 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 6, Module 21 (RL and training for agents)** under
-`curriculum/21-rl-and-training-for-agents/`, following the same per-module
-structure used so far. Before writing, verify current framing of RLVR
-(Reinforcement Learning from Verifiable Rewards) and GRPO -- the original
-plan's research (2026-09-22) called RLVR the dominant current approach for
-math/code/tool-use agent training specifically because rewards are
-deterministically checkable rather than learned, explicitly complementary
-to RLHF rather than a replacement; re-verify this framing is still accurate
-before treating it as ground truth (this module is exactly the kind of
-frontier-adjacent material where a claim can go stale between the original
-research date and now). Cover: why verifiable rewards matter (ties directly
-to Module 13's "run the tests" principle and Module 16's mechanical-check-
-over-judge preference -- RLVR is that same idea applied to a training
-signal instead of an eval signal), environment design for RL (what makes a
-task's reward genuinely verifiable vs. only approximately so), reward
-hacking (a model finding a way to maximize reward without actually solving
-the intended task -- connect to Module 18's security framing: an
-unconstrained reward function is a kind of "excessive agency" surface too),
-and GRPO at a conceptual level (no need to implement real RL training
-infrastructure, which is out of scope for this offline-testable
-curriculum). Lab: a small, genuinely hands-on verifiable-reward loop --a
-toy math or code task with a deterministic checker (reuse Module 13's
-sandboxed code execution or Module 03's `ast`-based safe eval as the
-verifier), computing a reward signal for several candidate solutions and
-selecting the best, illustrating the RLVR *concept* concretely without
-requiring a real training run or GPU -- keep this conceptual/illustrative
-and explicitly labeled as such, not a real RL training implementation.
-After Module 21, continue to Module 22 (Long-horizon & autonomous agents --
-its own "extend an agent with a PROGRESS.md-style self-tracking file" lab
-is a deliberate, nice full-circle mirror of this very repo's own workflow),
-Module 23 (Research literacy -- a structured reading + reproduction-attempt
-exercise using one verified current paper, no code lab), and Module 24
-(Becoming a pro -- portfolio/interview-prep content, no code lab, links
-into `system-design/`) to close Level 6. Two follow-ups noted in Open
-Issues above are worth revisiting when this environment has reliable
-network access: Module 14's live Playwright test and Module 15's live
-Anthropic vision test were both written but not executed this session. Run
-each solution's tests before marking done, then update this file and
-commit after each module.
+Build **Level 6, Module 22 (Long-horizon & autonomous agents)** under
+`curriculum/22-long-horizon-and-autonomous-agents/`, following the same
+per-module structure used so far. Cover: what changes about agent design
+over multi-hour (not multi-step) tasks -- context budgets compound
+differently over hours than over a bounded number of loop iterations
+(Module 05's context-engineering material, now at a much longer time
+horizon), self-verification becomes load-bearing rather than optional
+(Module 13's test-driven loop and Module 16's eval harness are the direct
+tools here, applied continuously rather than once at the end), and
+"progress files" as a concrete pattern for surviving interruption over a
+long horizon (this is a deliberate, nice full-circle moment: this very
+repo's own `PROGRESS.md` workflow, used across this entire multi-session
+build, IS the pattern being taught -- point back at it explicitly and
+directly rather than inventing a separate hypothetical example). Also
+cover agent reliability math: if a single step has success probability p,
+naive multi-step reliability degrades as p^n over n dependent steps, which
+is precisely why self-verification and checkpointing (Module 07) matter
+more, not less, as task horizon grows. Lab: extend an earlier agent (Module
+04's ReAct agent or Module 13's coding agent are good candidates) with a
+`PROGRESS.md`-style self-tracking file the agent reads/writes itself across
+simulated interruptions, proving a killed-and-restarted run resumes
+correctly without repeating completed work -- directly reuse Module 07's
+kill-and-resume test pattern (call the single-step function directly to
+simulate a crash, don't let a full run complete in one call). After Module
+22, build Module 23 (Research literacy -- a structured reading +
+reproduction-attempt exercise using one verified current paper, no code
+lab) and Module 24 (Becoming a pro -- portfolio/interview-prep content, no
+code lab, links into `system-design/`) to close Level 6. Two follow-ups
+noted in Open Issues above are worth revisiting when this environment has
+reliable network access: Module 14's live Playwright test and Module 15's
+live Anthropic vision test were both written but not executed this
+session. Run each solution's tests before marking done, then update this
+file and commit after each module.
