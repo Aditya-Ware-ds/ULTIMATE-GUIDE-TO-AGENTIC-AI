@@ -474,7 +474,23 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   18's OWASP claim) as worked proof the discipline isn't hypothetical.
   254 passed, 10 skipped, 3 deselected repo-wide (unchanged -- no code this
   module); links checked (97 unique, all OK).
-- ⬜ 24 Becoming a pro
+- ✅ 24 Becoming a pro -- **no code lab, per the approved plan.** 3 lessons:
+  building a portfolio (specificity/evidence over technology lists;
+  projects+capstones as the right showcase scale, individual labs as depth
+  evidence within those); open-source contribution (genuine gaps found
+  through real use -- citing Module 11's and Module 20's own pitfalls.md
+  entries as real examples of exactly this discovery process -- small/
+  precise beats large/ambitious for a first PR); agent system-design
+  interviews (constraints-first, cross-cutting-concerns-named-explicitly
+  structure). **Populated `system-design/` with its first real content**
+  (previously an empty stub): two full worked case studies --
+  `01-customer-support-agent-platform.md` (a single-agent-is-correct case)
+  and `02-multi-agent-research-system.md` (a multi-agent-earns-its-cost
+  case) -- each explicitly citing the specific curriculum modules and
+  actual `projects/` implementations the design draws on, per the
+  approved plan's cross-cutting-materials guidance. **Level 6 is now fully
+  complete.** 254 passed, 10 skipped, 3 deselected repo-wide (unchanged --
+  no code this module); links checked (98 unique, all OK).
 
 ## Capstones
 
@@ -545,36 +561,43 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 6, Module 24 (Becoming a pro)** under
-`curriculum/24-becoming-a-pro/`, the last module of Level 6 -- **no code
-lab, per the approved plan** (same reasoning as Module 23: this is
-portfolio/career content, not something a test suite verifies). Cover:
-portfolio strategy (what to build/show, and how this very curriculum's
-projects/capstones double as portfolio pieces once complete), open-source
-contribution guidance (how to find and make a genuine first contribution
-to an agent framework/tool, referencing the real projects this curriculum
-already covered in Module 11 -- LangGraph, OpenAI Agents SDK, etc. -- as
-concrete places to start), agent system-design interview prep (this is
-where `system-design/` gets its first real content -- write 2-3 worked
-system-design case studies, e.g. "design a customer-support agent
-platform" or "design a multi-agent research system," drawing on Modules
-09/12/16/18/19/22's material directly), and responsible-deployment/ethics
-material (grounded in Module 18's security material, not generic). After
-Module 24, Level 6 is complete -- move to the **3 capstones** (production
-coding agent, multi-agent research system, secure enterprise agent). These
-are large, multi-file efforts, each combining most of the curriculum's
-techniques (sandboxing, evals, tracing, security, deployment); given their
-size, consider using a fork or working through each capstone across
-several commits the way modules have been built (spec → architecture doc →
-implementation → eval suite → threat model → deploy guide, per the
-approved plan), rather than attempting one in a single pass. After the
-capstones, do the **final pass**: full offline test suite, a `test-live`
-smoke run if API keys become available, a full link check, `mkdocs build`,
-a terminology-vs-`GLOSSARY.md` consistency check, a prerequisite-ordering
+**Level 6 (all 25 curriculum modules) is now complete.** Build **Capstone 1
+-- Production coding agent** next, under `capstones/01-production-coding-agent/`
+(confirm exact directory naming convention -- likely mirroring
+`projects/0N-name/` but check for an existing scaffold first). Per the
+approved plan, ship it with: a spec, an architecture doc, an eval suite, a
+threat model, and a deploy guide -- not just code. Draw directly on Module
+13 (coding agents -- sandboxed execution, the test-driven agent loop) and
+Module 16 (evaluation -- score it on a held-out test set of real bugs in a
+sample repo, per the plan's "scored on a held-out test set" requirement).
+Concretely: a small sample repo (or a few) with real, held-out bugs the
+agent hasn't seen; a coding-agent loop reusing/extending Module 13's
+`shared/sandbox/`-based pattern; an eval harness (Module 16's
+`evaluate_dataset` shape) reporting a pass rate on the held-out set; a
+threat model section addressing Module 18's concerns as applied to a
+coding agent specifically (what can go wrong if it's tricked into running
+malicious code, and why the sandbox boundary -- not the model's judgment --
+is what actually prevents it); a deploy guide sketching how Module 19's
+service-wrapping pattern would apply. Keep it offline-testable via the
+mock provider, consistent with every module and project before it. After
+Capstone 1, build **Capstone 2 -- Multi-agent research system**
+(`capstones/02-multi-agent-research-system/`, drawing on Module 12, Module
+16, Module 17 -- this can concretely extend
+`projects/04-multi-agent-content-pipeline/` and reuse
+`system-design/02-multi-agent-research-system.md`'s architecture directly
+rather than redesigning from scratch), then **Capstone 3 -- Secure
+enterprise agent** (`capstones/03-secure-enterprise-agent/`, drawing on
+Module 09, Module 10, Module 18 -- MCP tools, human approval gates, and a
+real red-team report following Module 18's exact four-step process). These
+are large, multi-file efforts; consider using a fork or working through
+each capstone across several commits the way modules have been built,
+rather than attempting one in a single pass. After all three capstones, do
+the **final pass**: full offline test suite, a `test-live` smoke run if API
+keys become available, a full link check, `mkdocs build`, a
+terminology-vs-`GLOSSARY.md` consistency check, a prerequisite-ordering
 check across all 25 modules, and a summary of what shipped and any known
-gaps (including the two still-unexecuted live tests noted in Open Issues
-below). Two follow-ups noted in Open Issues above are worth revisiting when
+gaps. Two follow-ups noted in Open Issues above are worth revisiting when
 this environment has reliable network access: Module 14's live Playwright
 test and Module 15's live Anthropic vision test were both written but not
 executed this session. Run each solution's tests before marking done, then
-update this file and commit after each module/capstone.
+update this file and commit after each capstone.
