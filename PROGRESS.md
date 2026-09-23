@@ -538,7 +538,33 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   tests passing; starter's gaps correctly raise `NotImplementedError`. 278
   passed, 10 skipped, 3 deselected repo-wide; links checked (98 unique,
   all OK).
-- ⬜ 3. Secure enterprise agent
+- ✅ 3. Secure enterprise agent -- ships with README (spec), ARCHITECTURE.md,
+  THREAT_MODEL.md (a full red-team report following Module 18's exact
+  four-step process, 4 threats each mapped to a specific passing test),
+  and DEPLOY.md. A real `mcp.server.MCPServer`/`mcp.Client` (Module 10)
+  exposing `lookup_record`/`send_announcement`, composed with Module 09's
+  approval-gate pattern (`message_to_dict`/`from_dict`,
+  `save_checkpoint`/`load_checkpoint`, `AgentResult`, all unchanged in
+  shape) -- `dispatch` bridges the two by calling the real MCP client
+  instead of a local function registry. **Discovered and verified a real,
+  non-obvious `mcp` package behavior**: raising a plain exception inside an
+  `@mcp.tool()` function is caught and replaced with a generic "Error
+  executing tool X" message -- the specific message only propagates if the
+  tool raises `mcp.server.mcpserver.exceptions.ToolError` instead (found
+  by installing the real package and testing both paths directly before
+  writing any lesson/capstone content, documented in ARCHITECTURE.md).
+  **Core red-team proof**: `send_announcement`'s channel allowlist lives
+  inside the MCP tool itself, so a request to a non-allowlisted channel is
+  blocked even when a human approves it (`resume_after_approval(...,
+  approved=True)`) -- proven by
+  `test_redteam_approved_but_non_allowlisted_channel_is_still_blocked`.
+  Kill-and-resume is tested against **freshly loaded module instances and
+  a freshly started MCP server** (not the same objects used to create the
+  checkpoint), a stronger proof than reusing live objects would be. 7
+  tests passing; starter's gaps correctly raise `NotImplementedError`.
+  285 passed, 10 skipped, 3 deselected repo-wide; links checked (98
+  unique, all OK). **This is the last capstone -- all 25 curriculum
+  modules, 5 projects, and 3 capstones are now complete.**
 
 ## Final pass (do last)
 
@@ -603,32 +629,58 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-**Level 6 (all 25 curriculum modules) is complete. Capstones 1 (Production
-coding agent) and 2 (Multi-agent research system) are done.** Build
-**Capstone 3 -- Secure enterprise agent** next, under
-`capstones/03-secure-enterprise-agent/`, following the same artifact set
-as Capstones 1-2 (README spec, ARCHITECTURE.md, THREAT_MODEL.md,
-DEPLOY.md, `starter/`+`solution/`+`tests/`, test files prefixed
-`test_capstone_*` to avoid the basename-collision issue Capstone 1 hit).
-Draw on Module 09 (HITL), Module 10 (MCP), and Module 18 (security) per
-the plan. Concretely: an agent exposing real MCP tools (extend Module 10's
-`mcp.server.MCPServer` pattern, in-process `Client` testing) for a
-plausible enterprise scenario (e.g. querying internal records, drafting
-communications), a human-approval gate (Module 09's pattern) in front of
-every consequential tool, and a genuine red-team report following Module
-18's exact four-step process (pick a realistic scenario grounded in this
-specific agent's actual tools, prove an exploit with a failing test, patch
-it with a tool-level permission boundary, prove the same test now shows it
-blocked) -- extend
-`curriculum/18-security-and-safety/labs/01-indirect-injection-redteam/`'s
-pattern to this richer, MCP-tool-based agent rather than redesigning the
-approach from scratch. After Capstone 3, do
-the **final pass**: full offline test suite, a `test-live` smoke run if API
-keys become available, a full link check, `mkdocs build`, a
-terminology-vs-`GLOSSARY.md` consistency check, a prerequisite-ordering
-check across all 25 modules, and a summary of what shipped and any known
-gaps. Two follow-ups noted in Open Issues above are worth revisiting when
-this environment has reliable network access: Module 14's live Playwright
-test and Module 15's live Anthropic vision test were both written but not
-executed this session. Run each solution's tests before marking done, then
-update this file and commit after each capstone.
+**Every module, project, and capstone in the approved plan is now built
+(25 curriculum modules, 5 projects, 3 capstones).** What remains is the
+**final pass** described in the approved plan:
+
+1. **Full offline test suite** -- last confirmed green: 285 passed, 10
+   skipped (framework/DSPy/live tests correctly skipped without those
+   extras installed), 3 deselected (`live`-marked), 0 failed. Re-run
+   `uv run pytest -q` fresh before considering this final pass complete,
+   since files may have changed since this note was written.
+2. **`test-live` smoke run** -- **not run this session** (no real provider
+   API keys in this environment). Known live-gated tests still needing a
+   real run when keys are available: Module 03's live provider tests,
+   Module 11's Claude Agent SDK live test, Module 14's live Playwright
+   test (also needs `playwright install chromium`, which timed out this
+   session), Module 15's live Anthropic vision test, Module 20's DSPy live
+   path if one exists. Grep for `@pytest.mark.live` repo-wide to get the
+   current complete list before running.
+3. **Full link check** -- last confirmed green: `uv run python
+   scripts/check_links.py` reports "All links OK" (98 unique links across
+   269 files as of Capstone 3). Re-run fresh; note one transient timeout
+   was observed once earlier (Module 20, a SETUP.md link) that resolved on
+   retry -- treat a single failure as possibly transient and retry before
+   concluding a link is actually broken.
+4. **`mkdocs build`** -- last known state (from Phase 0): succeeds without
+   `--strict` (cross-link warnings are a known, documented, non-fatal
+   limitation -- see Open Issues below). Re-run `make docs` and confirm
+   this is still true after 25 modules' worth of new content; check
+   whether `docs/`'s `nav:` should now include module entries (noted as
+   low-priority in Open Issues since Phase 0, revisit given how much
+   content now exists).
+5. **Terminology-vs-`GLOSSARY.md` consistency check** -- **not yet done
+   this session.** `GLOSSARY.md` was written in Phase 0, before any of
+   Modules 00-24 existed; it needs a fresh pass checking that terms
+   introduced across all 25 modules (RLVR, GRPO, indirect prompt
+   injection, idempotency key, progress file, etc.) are actually defined
+   there, and that terminology is used consistently across modules (e.g.
+   "tool call" vs "function call," "checkpoint" vs "progress file" used
+   for genuinely different things per Module 07 vs Module 22, not
+   conflated).
+6. **Prerequisite-ordering check across all 25 modules** -- **not yet done
+   this session.** Verify each module's stated "Prerequisites" link and
+   each lesson's cross-references to earlier modules actually only ever
+   point backward (never forward to a module not yet introduced) --
+   spot-check is easy given every module's README explicitly named its
+   prerequisite; a full pass would grep every lesson file for "Module NN"
+   references and confirm NN is always ≤ the current module's own number.
+7. **Summary of what shipped and any known gaps** -- write this last, once
+   1-6 above are actually done, not before. Pull the known-gaps list
+   directly from the "Open issues / UNVERIFIED items" section below rather
+   than re-deriving it.
+
+Do not mark the curriculum "done" until this final pass actually runs (not
+just until every module's individual PROGRESS.md entry says ✅) -- the
+final pass is explicitly a separate, later verification step in the
+approved plan, distinct from each module's own build-time checks.
