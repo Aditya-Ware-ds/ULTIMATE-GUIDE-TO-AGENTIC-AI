@@ -362,7 +362,30 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
   hoping the model resists the injection. 4 tests passing; starter's gaps
   correctly raise `NotImplementedError`. 233 passed, 9 skipped, 3 deselected
   repo-wide; links checked (88 unique, all OK).
-- ⬜ 19 Deployment & scale
+- ✅ 19 Deployment & scale -- Level 5 closes. **Added `fastapi>=0.115.0` as a
+  real, persistent dependency** (verified current/actively maintained
+  2026-09-22, first new base dependency since Phase 0; installs cleanly, no
+  resolution conflicts) -- also added `[tool.ruff.lint.flake8-bugbear]
+  extend-immutable-calls` for FastAPI's `Depends()`-in-defaults idiom
+  (ruff's B008 otherwise flags it as a false-positive mutable-default bug).
+  3 lessons: streaming services and durable jobs (FastAPI `StreamingResponse`
+  + `TestClient`, tested fully in-process with zero network; durable jobs
+  named explicitly as Module 07's checkpoint/resume triggered by
+  infrastructure instead of a simulated crash); retries, idempotency, and
+  rate limits (an idempotency-key pattern verified against Stripe's real,
+  current production docs, including the ~24-hour key-expiry window);
+  prompt caching and cost optimization (Anthropic's current `cache_control`
+  mechanics and cache-hit cost reductions, verified 2026-09-22; model
+  routing tied back to Module 08's routing pattern and Module 12's
+  explicit-status escalation). 1 runnable example
+  (`idempotent_service_demo.py`, verified -- a real FastAPI app tested via
+  `TestClient`, proving a retried request doesn't re-call the agent). 1 lab:
+  a FastAPI service (`/jobs`, `/jobs/{key}`, `/jobs/stream`) with idempotent
+  job handling, using dependency-injection overrides to swap in the mock
+  provider for offline testing. 7 tests passing; starter's gaps correctly
+  raise `NotImplementedError` (surfaces through `TestClient` as expected).
+  240 passed, 9 skipped, 3 deselected repo-wide; links checked (91 unique,
+  all OK).
 
 ## Level 6 -- Expert / frontier
 
@@ -441,32 +464,39 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-Build **Level 5, Module 19 (Deployment & scale)** under
-`curriculum/19-deployment-and-scale/`, the last module of Level 5, following
-the same per-module structure used so far. Cover: wrapping an agent in a
-streaming API service (FastAPI is the natural choice -- confirm it's still
-current/standard before adding it as a new dependency, the same check given
-to Playwright in Module 14), background jobs and durable execution (Module
-07's checkpoint/resume pattern is the direct foundation -- a durable job is
-essentially "checkpoint/resume, but triggered by infrastructure instead of
-a crash"), retries/idempotency (an idempotency key preventing a retried
-request from re-running a consequential action -- ties directly to Module
-18's consequential-tool-permission material), rate limits and caching
-(including prompt caching -- verify current provider-specific prompt-cache
-mechanics before writing that section), model routing, and cost
-optimization (rolls up Module 02's cost math and Module 17's
-observability/dashboard material into an actual production decision-making
-process). Lab: wrap an earlier agent (Module 04's ReAct agent or Module
-18's secure agent are good candidates) in a small FastAPI service with
-idempotent job handling -- offline-testable via FastAPI's `TestClient` (no
-real network/server needed) and the mock provider, so no new live-only
-dependency is required for the default test suite. After Module 19, Level 5
-is complete -- start **Level 6, Module 20 (Optimizing agents)**: DSPy
-prompt/weight optimization (confirm DSPy is still the reference framework
-before citing it, per the original plan's research), fine-tuning for tool
-use, distillation, open-weight/local models. Two follow-ups noted in Open
-Issues above are worth revisiting when this environment has reliable
-network access: Module 14's live Playwright test and Module 15's live
-Anthropic vision test were both written but not executed this session. Run
-each solution's tests before marking done, then update this file and commit
-after each module.
+Level 5 is complete. Start **Level 6, Module 20 (Optimizing agents)** under
+`curriculum/20-optimizing-agents/`, following the same per-module structure
+used so far. Before writing, verify DSPy is still the reference
+prompt/weight-optimization framework (per the original plan's research from
+2026-09-22 -- re-check current version/API, since Module 11 already
+established that framework APIs in this space move fast and search results
+can describe stale versions; install it for real via `uv run --with dspy`
+and inspect with `dir()`/`inspect.signature()` before writing any code
+sample, the same technique used throughout Module 10/11). Cover: DSPy's
+core idea (declarative signatures + an optimizer that searches for better
+prompts/few-shot examples against a metric, rather than hand-tuning prompts
+manually -- ties directly back to Module 16's eval harness, since DSPy
+needs exactly that kind of metric function to optimize against), fine-tuning
+for tool use, distillation (training a smaller/cheaper model to imitate a
+larger one's outputs -- connects to Module 19's cost-optimization material
+and Module 02's cost tables), and open-weight/local models (Ollama is
+already `shared/llm/`'s fourth provider; this is where that choice gets its
+full context). Given DSPy is a heavy, potentially fast-moving dependency,
+default to Module 11's `uv run --with` pattern (not a persistent
+dependency) unless it turns out to be lightweight and conflict-free like
+FastAPI was. Lab: use DSPy to optimize a prompt for one earlier task against
+a small eval set -- Module 16's `evaluate_dataset`/golden dataset is the
+natural metric source; keep it offline-mockable (DSPy supports custom LMs,
+so wire in `shared/llm/get_client("mock")` or a thin adapter, the same
+"never require a live API key for the default test suite" discipline as
+every other module). After Module 20, continue to Module 21 (RL and
+training for agents -- RLVR/GRPO conceptual material, verify current
+framing before writing), Module 22 (Long-horizon & autonomous agents --
+note this module's own "extend an agent with a PROGRESS.md-style
+self-tracking file" lab is a deliberate, nice full-circle mirror of this
+very repo's own workflow), Module 23 (Research literacy), and Module 24
+(Becoming a pro) to close Level 6. Two follow-ups noted in Open Issues above
+are worth revisiting when this environment has reliable network access:
+Module 14's live Playwright test and Module 15's live Anthropic vision test
+were both written but not executed this session. Run each solution's tests
+before marking done, then update this file and commit after each module.

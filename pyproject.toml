@@ -18,6 +18,7 @@ dependencies = [
     "jsonschema>=4.23.0",
     "mcp>=2.0.0",
     "pyyaml>=6.0.0",
+    "fastapi>=0.115.0",
 ]
 
 [dependency-groups]
@@ -61,6 +62,12 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency-injection idiom requires calling Depends() (and
+# friends) as an argument default -- not a real mutable-default bug
+# (Module 19).
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body"]
 
 [build-system]
 requires = ["hatchling"]
