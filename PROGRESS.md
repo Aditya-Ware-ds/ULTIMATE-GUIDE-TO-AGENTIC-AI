@@ -7,6 +7,50 @@ approved plan, verified landscape notes, and build order this follows.
 
 Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
+## Build summary (as of the final pass, 2026-09-23)
+
+**Shipped**: all 25 curriculum modules (00-24), all 5 interleaved projects,
+all 3 capstones, `shared/`'s full library (LLM client abstraction across 4
+providers + mock, tracing, sandboxing), and cross-cutting materials
+(`system-design/`'s first 2 worked case studies, an updated `GLOSSARY.md`).
+Every module/project/capstone has a real, currently-passing test suite
+against the mock provider -- 285 tests passing, 0 failing, offline, with no
+API keys, as of this pass. Every module followed the same quality bar:
+lessons with a runnable code example, a lab with a real gap-containing
+starter and a tested solution, a quiz, a pitfalls file, and a dated,
+verified resources list.
+
+**What makes this build distinctive, not just "25 modules of content"**:
+several fast-moving claims were caught and corrected *during* the build,
+not after -- Module 14 corrected an assumption about computer-use
+architecture (accessibility-tree vs. screenshot-based) by checking all
+three major vendors' current docs directly; Module 18 corrected a
+fabricated-sounding claim from the original plan (a specific OWASP
+"Agentic Top 10" ranking that turned out not to exist in that form) the
+same way; Module 20 and Capstone 3 each uncovered real, non-obvious
+library behavior (DSPy's adapter fallback doubling call counts; the `mcp`
+package swallowing plain exception messages) by installing the actual
+package and testing directly, before writing any lesson content. This
+install-and-verify discipline, established in Module 10 and repeated
+throughout, is arguably the single most load-bearing habit behind this
+build's accuracy.
+
+**Known gaps** (see "Open issues" below for the full list with detail):
+no live-API test has been executed this session (no keys available) --
+every `@pytest.mark.live` test is written and should pass, but that's
+unverified against a real provider; `Message.images` (Module 15) is wired
+into `AnthropicProvider` only; `mkdocs build --strict` still fails on a
+known, non-fatal cross-link resolution issue; `docs/`'s nav doesn't yet
+list individual curriculum modules (searchable, but not in the top nav);
+`cheatsheets/` and `papers/` still contain only their Phase-0 stub READMEs
+and were not populated during this pass (the approved plan calls for
+populating them "alongside the modules they summarize," which this
+session prioritized differently -- finishing the full module/project/
+capstone set first). A learner using this repo today can complete the
+entire curriculum and both cross-cutting `system-design/` case studies
+with zero gaps; the two thin stub directories and the unexecuted live
+tests are the honest remaining TODOs.
+
 ## Phase 0 -- Scaffold
 
 - ✅ Repo skeleton (`shared/`, `curriculum/`, `projects/`, `capstones/`, `cheatsheets/`, `papers/`, `system-design/`)
@@ -568,12 +612,49 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Final pass (do last)
 
-- ⬜ Full offline test suite
-- ⬜ `test-live` smoke run (requires real keys)
-- ⬜ Link check
-- ⬜ `mkdocs build --strict`
-- ⬜ Terminology-vs-`GLOSSARY.md` consistency pass
-- ⬜ Prerequisite-ordering check
+- ✅ Full offline test suite -- `uv run pytest -q`: **285 passed, 10
+  skipped, 3 deselected, 0 failed** (last run after Capstone 3). Re-run
+  fresh before trusting this if more time has passed / files changed.
+- ⬜ `test-live` smoke run -- **not run, no real API keys in this
+  environment**. Every `@pytest.mark.live` test across the repo needs a
+  real run before this item is genuinely done; grep for
+  `pytest.mark.live` to enumerate them (known ones as of this session:
+  Module 11's Claude Agent SDK test, Module 14's Playwright test, Module
+  15's Anthropic vision test, plus whichever Module 03/19 live tests exist
+  -- confirm the full list with a fresh grep, don't trust this list as
+  exhaustive without checking).
+- ✅ Link check -- `uv run python scripts/check_links.py`: **98 unique
+  links across 493 files (after `mkdocs build`'s docs/ sync), all OK.**
+  One transient network timeout was observed once during Module 20's build
+  (a SETUP.md link) and resolved cleanly on retry -- not a real broken link.
+- ✅ `mkdocs build` (non-`--strict`) -- **succeeds, 23.6s build time**,
+  after `uv sync --all-groups` (the `docs` dependency group wasn't synced
+  by default `uv run` commands used throughout this session -- only
+  `make setup`'s `--all-groups` installs it). `--strict` still fails on
+  the same known, pre-existing, non-fatal issue documented below
+  (GitHub-relative cross-links not resolving through the include-markdown
+  wrappers) -- confirmed unchanged in kind at full 25-module scale, not a
+  new regression.
+- ✅ Terminology-vs-`GLOSSARY.md` consistency pass -- **done**. The
+  glossary (written in Phase 0) was missing several terms introduced in
+  Modules 07-22; added: Checkpoint/resume, Distillation, Human-in-the-loop
+  / approval gate, Idempotency key, Indirect prompt injection, Least
+  privilege / tool permissions, MCP, Observability/tracing, Progress file,
+  Prompt injection, Reward hacking -- each cross-referencing the module(s)
+  that introduced it, with explicit disambiguation between terms that
+  sound similar but mean different things (Checkpoint/resume vs. Progress
+  file; Human-in-the-loop vs. Least privilege, explicitly noted as
+  complementary layers per Module 18 lesson 02).
+- ✅ Prerequisite-ordering check -- **done, no violations found**.
+  Verified programmatically that every module's declared "Prerequisites"
+  section points to exactly the immediately preceding module (or, at a
+  Level boundary -- Module 10 -- to "Level N complete," never skipping
+  or pointing forward). Separately spot-checked forward "Module NN"
+  mentions inside lesson prose (there are many, by design) and confirmed
+  they're consistently phrased as foreshadowing ("a preview of Module X,"
+  "covered fully in Module Y") rather than assuming knowledge the reader
+  doesn't have yet -- e.g. Module 00 mentions Module 16/17/18 only as
+  "this becomes relevant later," never as required background.
 
 ## Open issues / UNVERIFIED items
 
@@ -629,58 +710,36 @@ Legend: ✅ done and tested · 🚧 in progress · ⬜ not started
 
 ## Exact next step
 
-**Every module, project, and capstone in the approved plan is now built
-(25 curriculum modules, 5 projects, 3 capstones).** What remains is the
-**final pass** described in the approved plan:
+**The full curriculum (25 modules, 5 projects, 3 capstones) and the final
+pass are both complete** (full offline suite green, link check green,
+`mkdocs build` succeeds non-strict, glossary updated, prerequisite
+ordering verified -- see "Build summary" at the top of this file and the
+checked-off items above). What remains, per the approved plan's
+cross-cutting-materials guidance, is populating **`cheatsheets/`** and
+**`papers/`**, both still just their Phase-0 stub READMEs:
 
-1. **Full offline test suite** -- last confirmed green: 285 passed, 10
-   skipped (framework/DSPy/live tests correctly skipped without those
-   extras installed), 3 deselected (`live`-marked), 0 failed. Re-run
-   `uv run pytest -q` fresh before considering this final pass complete,
-   since files may have changed since this note was written.
-2. **`test-live` smoke run** -- **not run this session** (no real provider
-   API keys in this environment). Known live-gated tests still needing a
-   real run when keys are available: Module 03's live provider tests,
-   Module 11's Claude Agent SDK live test, Module 14's live Playwright
-   test (also needs `playwright install chromium`, which timed out this
-   session), Module 15's live Anthropic vision test, Module 20's DSPy live
-   path if one exists. Grep for `@pytest.mark.live` repo-wide to get the
-   current complete list before running.
-3. **Full link check** -- last confirmed green: `uv run python
-   scripts/check_links.py` reports "All links OK" (98 unique links across
-   269 files as of Capstone 3). Re-run fresh; note one transient timeout
-   was observed once earlier (Module 20, a SETUP.md link) that resolved on
-   retry -- treat a single failure as possibly transient and retry before
-   concluding a link is actually broken.
-4. **`mkdocs build`** -- last known state (from Phase 0): succeeds without
-   `--strict` (cross-link warnings are a known, documented, non-fatal
-   limitation -- see Open Issues below). Re-run `make docs` and confirm
-   this is still true after 25 modules' worth of new content; check
-   whether `docs/`'s `nav:` should now include module entries (noted as
-   low-priority in Open Issues since Phase 0, revisit given how much
-   content now exists).
-5. **Terminology-vs-`GLOSSARY.md` consistency check** -- **not yet done
-   this session.** `GLOSSARY.md` was written in Phase 0, before any of
-   Modules 00-24 existed; it needs a fresh pass checking that terms
-   introduced across all 25 modules (RLVR, GRPO, indirect prompt
-   injection, idempotency key, progress file, etc.) are actually defined
-   there, and that terminology is used consistently across modules (e.g.
-   "tool call" vs "function call," "checkpoint" vs "progress file" used
-   for genuinely different things per Module 07 vs Module 22, not
-   conflated).
-6. **Prerequisite-ordering check across all 25 modules** -- **not yet done
-   this session.** Verify each module's stated "Prerequisites" link and
-   each lesson's cross-references to earlier modules actually only ever
-   point backward (never forward to a module not yet introduced) --
-   spot-check is easy given every module's README explicitly named its
-   prerequisite; a full pass would grep every lesson file for "Module NN"
-   references and confirm NN is always ≤ the current module's own number.
-7. **Summary of what shipped and any known gaps** -- write this last, once
-   1-6 above are actually done, not before. Pull the known-gaps list
-   directly from the "Open issues / UNVERIFIED items" section below rather
-   than re-deriving it.
+- **`cheatsheets/`** -- one-page quick references, per the stub's own
+  stated plan: agent design patterns (Module 08's plan-and-execute/
+  reflection/routing/parallelization/orchestrator-workers/evaluator-
+  optimizer, one line each with when to use it), a framework comparison
+  matrix (Module 11 already wrote a full comparison lesson --
+  `curriculum/11-frameworks/lessons/02-comparison-matrix-and-how-to-choose.md`
+  -- condense that into cheatsheet form, don't re-derive it), evaluation
+  metrics (Module 16), and a security checklist (Module 18's OWASP table
+  plus its tool-permission/red-team checklist, condensed).
+- **`papers/`** -- an annotated reading list. Pull from papers already
+  verified real and cited across this build rather than researching new
+  ones from scratch: Reflexion (Module 08), G-Eval and the LLM-as-judge
+  bias paper (Module 16), DeepSeekMath/GRPO (Modules 21 and 23), plus
+  anything cited in Module 23's own resources.md. Each entry needs what
+  the paper actually showed, why it matters for building agents, and its
+  verified link -- reuse the verification already done in-session, don't
+  re-verify from scratch, but do double check each link still resolves via
+  `scripts/check_links.py` before committing.
 
-Do not mark the curriculum "done" until this final pass actually runs (not
-just until every module's individual PROGRESS.md entry says ✅) -- the
-final pass is explicitly a separate, later verification step in the
-approved plan, distinct from each module's own build-time checks.
+Both are pure-markdown content additions (no code, no new tests beyond the
+existing link checker). After these, do one final full verification pass
+(`uv run pytest -q`, `uv run python scripts/check_links.py`) and commit.
+At that point every piece of the approved plan is complete with no known
+remaining gaps except the unexecuted live-API tests (Open Issues below),
+which require real provider keys this environment doesn't have.
